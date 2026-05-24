@@ -49,10 +49,10 @@ export default async function Home() {
       {/* Hero */}
       <section className="max-w-6xl mx-auto px-6 pt-20 pb-12 text-center">
         <div className="text-5xl mb-6">🗝️🐈</div>
-        <h1 className="text-5xl sm:text-6xl font-bold tracking-tight mb-4">
+        <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-4">
           Stop hunting GitHub for AI integrations.
         </h1>
-        <p className="text-xl text-[var(--color-ink-muted)] max-w-2xl mx-auto mb-8">
+        <p className="text-base sm:text-xl text-[var(--color-ink-muted)] max-w-2xl mx-auto mb-8">
           Vault is the curated index of tools that connect{" "}
           <span className="text-[var(--color-orange-dark)] font-semibold">Claude, GPT, Gemini</span>{" "}
           and other AI to{" "}

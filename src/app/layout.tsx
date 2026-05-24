@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import "./globals.css";
 import { getSiteUrl } from "@/lib/env";
+import { MobileNav } from "@/components/MobileNav";
 
 const SITE_URL = getSiteUrl().replace(/\/$/, "");
 const SITE_NAME = "Vault";
@@ -52,7 +53,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className="h-full antialiased">
       <body className="min-h-full flex flex-col">
-        <header className="border-b border-[var(--color-border)] bg-[var(--color-cream)]/80 backdrop-blur sticky top-0 z-10">
+        <header className="border-b border-[var(--color-border)] bg-[var(--color-cream)]/80 backdrop-blur sticky top-0 z-10 relative">
           <nav className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
             <Link href="/" className="flex items-center gap-2 font-semibold text-lg">
               <span className="text-2xl">🗝️</span>
@@ -61,7 +62,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 by Cheesyboy
               </span>
             </Link>
-            <div className="flex items-center gap-4 text-sm">
+            <div className="hidden md:flex items-center gap-4 text-sm">
               <Link href="/directory" className="hover:text-[var(--color-orange-primary)]">
                 Directory
               </Link>
@@ -75,6 +76,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 Subscribe
               </Link>
             </div>
+            <MobileNav />
           </nav>
         </header>
         <main className="flex-1">{children}</main>

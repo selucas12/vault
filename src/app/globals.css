@@ -74,3 +74,14 @@ html, body {
 .badge-target { border-color: #C8D9F0; background-color: #F0F6FE; }
 .badge-verified { border-color: #B5E0B5; background-color: #EBF7EB; color: #226622; }
 .badge-unverified { border-color: #E8DFD2; background-color: #FAF6EF; color: #6A5A3A; }
+
+/* Mobile overflow safety for install commands */
+pre {
+  max-width: 100%;
+  overflow-x: auto;
+  word-break: break-all;
+}
+
+/* Prose-style paragraphs for legal pages */
+.prose-vault p { margin-bottom: 0.75rem; line-height: 1.7; }
+.prose-vault li { line-height: 1.6; }
