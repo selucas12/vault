@@ -5,6 +5,9 @@ import { getSupabaseServer } from "@/lib/supabase/server";
 import { getSubscriptionState } from "@/lib/subscription";
 import { getLemonSqueezyEnv } from "@/lib/env";
 import { SignOutButton } from "@/components/SignOutButton";
+import { CheckoutButton } from "@/components/CheckoutButton";
+import { CheckoutIntentHandler } from "@/components/CheckoutIntentHandler";
+import { checkoutMonthly, checkoutAnnual } from "@/lib/actions/checkout";
 
 export const metadata: Metadata = {
   title: "Account",
@@ -35,6 +38,7 @@ export default async function AccountPage() {
 
   return (
     <div className="max-w-2xl mx-auto px-6 py-12">
+      <CheckoutIntentHandler />
       <h1 className="text-3xl font-bold mb-6">Account</h1>
 
       <section className="card mb-4">
@@ -63,12 +67,8 @@ export default async function AccountPage() {
             </p>
             {ls ? (
               <div className="flex gap-2 flex-wrap">
-                <a href={ls.monthly} className="btn-primary text-sm">
-                  $9.99/mo
-                </a>
-                <a href={ls.annual} className="btn-ghost text-sm">
-                  $99/yr (save 17%)
-                </a>
+                <CheckoutButton action={checkoutMonthly} label="$9.99/mo" />
+                <CheckoutButton action={checkoutAnnual} label="$99/yr (save 17%)" />
               </div>
             ) : (
               <Link href="/#pricing" className="btn-primary text-sm">

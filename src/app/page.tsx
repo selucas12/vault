@@ -4,6 +4,8 @@ import { getLemonSqueezyEnv, getSiteUrl, getTallyFormId } from "@/lib/env";
 import { getFlagshipEntry } from "@/lib/flagship";
 import { JsonLd } from "@/components/JsonLd";
 import { EmailCaptureCTA } from "@/components/EmailCaptureCTA";
+import { CheckoutButton } from "@/components/CheckoutButton";
+import { checkoutMonthly, checkoutAnnual } from "@/lib/actions/checkout";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/" },
@@ -158,9 +160,7 @@ export default async function Home() {
               <li>✓ Save your shortlist</li>
             </ul>
             {checkoutReady ? (
-              <a href={ls.monthly} className="btn-primary w-full">
-                Subscribe monthly
-              </a>
+              <CheckoutButton action={checkoutMonthly} label="Subscribe monthly" />
             ) : (
               <button disabled className="btn-primary w-full" title="Pricing locks once the LemonSqueezy product is created">
                 Coming soon
@@ -180,9 +180,7 @@ export default async function Home() {
               <li>✓ Direct support to meow@cheesyboy.dev</li>
             </ul>
             {checkoutReady ? (
-              <a href={ls.annual} className="btn-primary w-full">
-                Subscribe yearly
-              </a>
+              <CheckoutButton action={checkoutAnnual} label="Subscribe yearly" />
             ) : (
               <button disabled className="btn-primary w-full" title="Pricing locks once the LemonSqueezy product is created">
                 Coming soon
