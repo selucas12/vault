@@ -53,8 +53,8 @@ export default async function Home() {
           <Image
             src="/cheesy/cheesy%20image%20logo.png"
             alt="Cheesyboy"
-            width={128}
-            height={128}
+            width={240}
+            height={240}
             priority
           />
         </div>
