@@ -9,6 +9,7 @@ export async function GET(req: Request) {
   const url = new URL(req.url);
   const code = url.searchParams.get("code");
   const next = url.searchParams.get("next") ?? "/account";
+  const intent = url.searchParams.get("intent");
 
   if (!code) {
     return NextResponse.redirect(`${getSiteUrl()}/login`);
@@ -24,5 +25,7 @@ export async function GET(req: Request) {
     return NextResponse.redirect(`${getSiteUrl()}/login?error=${encodeURIComponent(error.message)}`);
   }
 
-  return NextResponse.redirect(`${getSiteUrl()}${next}`);
+  let redirectUrl = `${getSiteUrl()}${next}`;
+  if (intent) redirectUrl += `${next.includes("?") ? "&" : "?"}intent=${encodeURIComponent(intent)}`;
+  return NextResponse.redirect(redirectUrl);
 }
