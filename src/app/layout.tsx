@@ -79,20 +79,36 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </header>
         <main className="flex-1">{children}</main>
         <footer className="border-t border-[var(--color-border)] mt-16">
-          <div className="max-w-6xl mx-auto px-6 py-8 text-sm text-[var(--color-ink-muted)] flex flex-wrap items-center justify-between gap-4">
-            <div>
-              Vault — a Cheesyboy product.{" "}
-              <a href="https://cheesyboy.dev" className="underline hover:text-[var(--color-orange-primary)]">
-                cheesyboy.dev
-              </a>
-            </div>
-            <div className="flex gap-4">
-              <a href="mailto:meow@cheesyboy.dev" className="hover:text-[var(--color-orange-primary)]">
-                meow@cheesyboy.dev
-              </a>
-              <a href="https://github.com/selucas12/vault" className="hover:text-[var(--color-orange-primary)]">
-                GitHub
-              </a>
+          <div className="max-w-6xl mx-auto px-6 py-8 text-sm text-[var(--color-ink-muted)]">
+            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-6">
+              <div>
+                <div className="font-semibold text-[var(--color-ink)] mb-1">Vault</div>
+                <div>
+                  A{" "}
+                  <a href="https://cheesyboy.dev" className="underline hover:text-[var(--color-orange-primary)]">
+                    Cheesyboy
+                  </a>{" "}
+                  product.
+                </div>
+                <a href="mailto:meow@cheesyboy.dev" className="hover:text-[var(--color-orange-primary)]">
+                  meow@cheesyboy.dev
+                </a>
+              </div>
+              <div className="flex gap-8">
+                <div className="space-y-1">
+                  <div className="font-semibold text-[var(--color-ink)] text-xs uppercase tracking-wider">Product</div>
+                  <Link href="/directory" className="block hover:text-[var(--color-orange-primary)]">Directory</Link>
+                  <Link href="/search" className="block hover:text-[var(--color-orange-primary)]">AI Search</Link>
+                  <a href="https://github.com/selucas12/vault" className="block hover:text-[var(--color-orange-primary)]">GitHub</a>
+                </div>
+                <div className="space-y-1">
+                  <div className="font-semibold text-[var(--color-ink)] text-xs uppercase tracking-wider">Legal</div>
+                  <Link href="/refund" className="block hover:text-[var(--color-orange-primary)]">Refund</Link>
+                  <Link href="/terms" className="block hover:text-[var(--color-orange-primary)]">Terms</Link>
+                  <Link href="/privacy" className="block hover:text-[var(--color-orange-primary)]">Privacy</Link>
+                  <Link href="/help" className="block hover:text-[var(--color-orange-primary)]">Help</Link>
+                </div>
+              </div>
             </div>
           </div>
         </footer>
