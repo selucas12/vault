@@ -162,7 +162,7 @@ export default async function Home() {
               <li>✓ <a href="/refund" className="underline">30-day refund</a></li>
             </ul>
             {checkoutReady ? (
-              <CheckoutButton action={checkoutMonthly} label="Get Vault Monthly" />
+              <CheckoutButton action={checkoutMonthly} label="Get Vault Monthly" plan="monthly" />
             ) : (
               <button disabled className="btn-primary w-full" title="Pricing locks once the LemonSqueezy product is created">
                 Coming soon
@@ -184,7 +184,7 @@ export default async function Home() {
               <li>✓ <a href="/refund" className="underline">30-day refund</a></li>
             </ul>
             {checkoutReady ? (
-              <CheckoutButton action={checkoutAnnual} label="Get Vault Annual" />
+              <CheckoutButton action={checkoutAnnual} label="Get Vault Annual" plan="annual" />
             ) : (
               <button disabled className="btn-primary w-full" title="Pricing locks once the LemonSqueezy product is created">
                 Coming soon

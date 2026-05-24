@@ -3,6 +3,7 @@ import Link from "next/link";
 import "./globals.css";
 import { getSiteUrl } from "@/lib/env";
 import { MobileNav } from "@/components/MobileNav";
+import { PlausibleProvider } from "@/components/PlausibleProvider";
 
 const SITE_URL = getSiteUrl().replace(/\/$/, "");
 const SITE_NAME = "Vault";
@@ -53,6 +54,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className="h-full antialiased">
       <body className="min-h-full flex flex-col">
+        <PlausibleProvider />
         <header className="border-b border-[var(--color-border)] bg-[var(--color-cream)]/80 backdrop-blur sticky top-0 z-10 relative">
           <nav className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
             <Link href="/" className="flex items-center gap-2 font-semibold text-lg">

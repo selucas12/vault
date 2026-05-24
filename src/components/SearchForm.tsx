@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { trackEvent } from "@/lib/analytics";
 
 interface ResultMatch {
   id: string;
@@ -41,6 +42,9 @@ export function SearchForm() {
       });
       const data: SearchResponse = await res.json();
       setResult(data);
+      if (data.ok) {
+        trackEvent("Search Completed", { result_count: data.matches.length });
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Search failed");
     } finally {

@@ -67,8 +67,8 @@ export default async function AccountPage() {
             </p>
             {ls ? (
               <div className="flex gap-2 flex-wrap">
-                <CheckoutButton action={checkoutMonthly} label="$9.99/mo" />
-                <CheckoutButton action={checkoutAnnual} label="$99/yr (save 17%)" />
+                <CheckoutButton action={checkoutMonthly} label="$9.99/mo" plan="monthly" />
+                <CheckoutButton action={checkoutAnnual} label="$99/yr (save 17%)" plan="annual" />
               </div>
             ) : (
               <Link href="/#pricing" className="btn-primary text-sm">

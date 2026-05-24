@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { getSupabaseServer } from "@/lib/supabase/server";
 import { getSiteUrl } from "@/lib/env";
+// Note: trackEvent is client-side only. Login Completed is tracked on the
+// /account page load (client component) rather than here in the route handler.
 
 // Magic-link redirect target. Supabase sends a `code` we exchange for a session.
 export async function GET(req: Request) {
