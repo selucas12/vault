@@ -1,9 +1,17 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import type { Metadata } from "next";
 import { getSupabaseServer } from "@/lib/supabase/server";
 import { getSubscriptionState } from "@/lib/subscription";
 import { getLemonSqueezyEnv } from "@/lib/env";
 import { SignOutButton } from "@/components/SignOutButton";
+
+export const metadata: Metadata = {
+  title: "Account",
+  description: "Manage your Vault subscription.",
+  alternates: { canonical: "/account" },
+  robots: { index: false, follow: false },
+};
 
 export default async function AccountPage() {
   const supabase = await getSupabaseServer();

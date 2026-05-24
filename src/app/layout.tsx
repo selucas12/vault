@@ -1,11 +1,51 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import "./globals.css";
+import { getSiteUrl } from "@/lib/env";
+
+const SITE_URL = getSiteUrl().replace(/\/$/, "");
+const SITE_NAME = "Vault";
+const DEFAULT_DESCRIPTION =
+  "A curated, AI-searchable directory of tools that connect Claude, GPT, Gemini, and other AI to Telegram, Slack, Discord, WhatsApp, and iMessage. By the makers of Cheesyboy.";
 
 export const metadata: Metadata = {
-  title: "Vault — the curated index of AI ↔ chat-platform integrations",
-  description:
-    "A curated, AI-searchable directory of tools that connect Claude, GPT, Gemini, and other AI to Telegram, Slack, Discord, WhatsApp, and iMessage. By the makers of Cheesyboy.",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: "Vault — the curated index of AI ↔ chat-platform integrations",
+    template: "%s · Vault",
+  },
+  description: DEFAULT_DESCRIPTION,
+  applicationName: SITE_NAME,
+  authors: [{ name: "Cheesyboy", url: "https://cheesyboy.dev" }],
+  keywords: [
+    "AI integrations",
+    "Claude bot",
+    "ChatGPT Telegram bot",
+    "Slack AI",
+    "Discord AI",
+    "Gemini bot",
+    "AI directory",
+    "chatbot index",
+  ],
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    siteName: SITE_NAME,
+    title: "Vault — the curated index of AI ↔ chat-platform integrations",
+    description: DEFAULT_DESCRIPTION,
+    url: "/",
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Vault — curated AI ↔ chat-platform integrations",
+    description: DEFAULT_DESCRIPTION,
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, "max-snippet": -1, "max-image-preview": "large" },
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

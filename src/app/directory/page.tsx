@@ -1,8 +1,16 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { CodeCard } from "@/components/CodeCard";
 import { FilterBar } from "@/components/FilterBar";
 import { getSupabaseServer } from "@/lib/supabase/server";
 import type { Code } from "@/lib/types";
+
+export const metadata: Metadata = {
+  title: "Directory",
+  description:
+    "Browse the curated index of AI ↔ chat-platform integrations. Filter by Claude, GPT, Gemini, and other AI models. Filter by Telegram, Slack, Discord, WhatsApp, iMessage.",
+  alternates: { canonical: "/directory" },
+};
 
 const PAGE_SIZE = 20;
 

@@ -3,6 +3,9 @@
 import { useState } from "react";
 import { getSupabaseBrowser } from "@/lib/supabase/browser";
 
+// "use client" components can't export metadata, so the parent layout's
+// defaults (with title template "Sign in · Vault") still apply via the
+// document.title set below.
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [state, setState] = useState<"idle" | "loading" | "sent" | "error">("idle");

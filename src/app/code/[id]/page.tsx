@@ -1,8 +1,50 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import { CopyButton } from "@/components/CopyButton";
+import { JsonLd } from "@/components/JsonLd";
 import { getSupabaseServer } from "@/lib/supabase/server";
+import { getSiteUrl } from "@/lib/env";
 import type { Code } from "@/lib/types";
+
+async function fetchEntry(id: string): Promise<Code | null> {
+  const supabase = await getSupabaseServer();
+  if (!supabase) return null;
+  const { data } = await supabase
+    .from("codes")
+    .select("*")
+    .eq("id", id)
+    .eq("approved", true)
+    .maybeSingle();
+  return (data as Code | null) ?? null;
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const code = await fetchEntry(id);
+  if (!code) return { title: "Entry not found", robots: { index: false, follow: false } };
+  const title = code.title;
+  const description =
+    code.description ??
+    `${code.title} — AI integration available in the Vault directory.`;
+  const canonical = `/code/${code.id}`;
+  return {
+    title,
+    description,
+    alternates: { canonical },
+    openGraph: {
+      title: `${title} · Vault`,
+      description,
+      url: canonical,
+      type: "website",
+    },
+    twitter: { card: "summary_large_image", title, description },
+  };
+}
 
 export default async function CodeDetailPage({
   params,
@@ -30,9 +72,36 @@ export default async function CodeDetailPage({
 
   if (error || !data) notFound();
   const code = data as Code;
+  const siteUrl = getSiteUrl().replace(/\/$/, "");
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    name: code.title,
+    description: code.description ?? undefined,
+    url: `${siteUrl}/code/${code.id}`,
+    applicationCategory: "DeveloperApplication",
+    operatingSystem: "Cross-platform",
+    programmingLanguage: code.language ?? undefined,
+    license: code.license ?? undefined,
+    codeRepository: code.github_url ?? undefined,
+    author: code.author ? { "@type": "Person", name: code.author } : undefined,
+    aggregateRating:
+      code.stars > 0
+        ? {
+            "@type": "AggregateRating",
+            ratingValue: Math.min(5, Math.max(1, Math.log10(code.stars + 1) + 1)).toFixed(1),
+            ratingCount: code.stars,
+            bestRating: 5,
+            worstRating: 1,
+          }
+        : undefined,
+    keywords: [...code.ai_platforms, ...code.delivery_targets].join(", "),
+  };
 
   return (
     <article className="max-w-3xl mx-auto px-6 py-12">
+      <JsonLd data={jsonLd} />
       <Link href="/directory" className="text-sm text-[var(--color-ink-muted)] hover:underline">
         ← Back to directory
       </Link>

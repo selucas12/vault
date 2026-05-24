@@ -1,6 +1,14 @@
 import { SearchForm } from "@/components/SearchForm";
 import { getSubscriptionState } from "@/lib/subscription";
 import Link from "next/link";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "AI Search",
+  description:
+    "Describe what you want in plain English. Vault's AI matches your request to the right integration with reasoning and an install command.",
+  alternates: { canonical: "/search" },
+};
 
 export default async function SearchPage() {
   const sub = await getSubscriptionState();

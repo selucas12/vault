@@ -1,15 +1,47 @@
 import Link from "next/link";
-import { getLemonSqueezyEnv } from "@/lib/env";
+import type { Metadata } from "next";
+import { getLemonSqueezyEnv, getSiteUrl } from "@/lib/env";
 import { getFlagshipEntry } from "@/lib/flagship";
+import { JsonLd } from "@/components/JsonLd";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
 
 export default async function Home() {
   const ls = getLemonSqueezyEnv();
   const checkoutReady = ls !== null;
   const flagship = await getFlagshipEntry();
   const flagshipHref = flagship ? `/code/${flagship.id}` : "/directory";
+  const siteUrl = getSiteUrl().replace(/\/$/, "");
 
   return (
     <div>
+      <JsonLd
+        data={[
+          {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            name: "Vault",
+            url: siteUrl,
+            logo: `${siteUrl}/icon.svg`,
+            email: "meow@cheesyboy.dev",
+            sameAs: ["https://cheesyboy.dev", "https://github.com/selucas12/vault"],
+            parentOrganization: { "@type": "Organization", name: "Cheesyboy", url: "https://cheesyboy.dev" },
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            name: "Vault",
+            url: siteUrl,
+            potentialAction: {
+              "@type": "SearchAction",
+              target: `${siteUrl}/search?q={search_term_string}`,
+              "query-input": "required name=search_term_string",
+            },
+          },
+        ]}
+      />
       {/* Hero */}
       <section className="max-w-6xl mx-auto px-6 pt-20 pb-12 text-center">
         <div className="text-5xl mb-6">🗝️🐈</div>
