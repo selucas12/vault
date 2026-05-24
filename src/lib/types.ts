@@ -23,7 +23,10 @@ export type SourceType =
   | "github-topic"
   | "huggingface"
   | "reddit"
-  | "manual";
+  | "manual"
+  | "n8n"
+  | "pipedream"
+  | "make";
 
 export interface Code {
   id: string;

@@ -23,6 +23,9 @@
 import { githubAwesomeSource } from "./sources/github-awesome";
 import { githubTopicsSource } from "./sources/github-topics";
 import { huggingfaceSource } from "./sources/huggingface";
+import { n8nSource } from "./sources/n8n";
+import { pipedreamSource } from "./sources/pipedream";
+import { makeSource } from "./sources/make";
 import { embedText } from "./embed";
 import { getDb } from "./db";
 import type { RawEntry, SourceModule } from "./types";
@@ -31,6 +34,9 @@ const ALL_SOURCES: SourceModule[] = [
   githubAwesomeSource,
   githubTopicsSource,
   huggingfaceSource,
+  n8nSource,
+  pipedreamSource,
+  makeSource,
 ];
 
 interface CliArgs {

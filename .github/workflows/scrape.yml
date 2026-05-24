@@ -6,9 +6,21 @@ on:
   workflow_dispatch:
     inputs:
       limit:
-        description: "Max new entries this run"
+        description: "Max new entries this run (total across all sources)"
         type: string
-        default: "200"
+        default: "500"
+      source:
+        description: "Source filter (blank = all)"
+        type: choice
+        options:
+          - ""
+          - github-awesome
+          - github-topic
+          - huggingface
+          - n8n
+          - pipedream
+          - make
+        default: ""
       dry_run:
         description: "Dry run (no DB writes)"
         type: boolean
@@ -17,7 +29,7 @@ on:
 jobs:
   scrape:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
     env:
       NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
       SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
@@ -32,7 +44,11 @@ jobs:
       - run: npm ci
       - name: Run scraper
         run: |
-          ARGS="--limit ${{ github.event.inputs.limit || '200' }}"
+          ARGS="--limit ${{ github.event.inputs.limit || '500' }}"
+          SOURCE="${{ github.event.inputs.source }}"
+          if [ -n "$SOURCE" ]; then
+            ARGS="$ARGS --source $SOURCE"
+          fi
           if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
             ARGS="$ARGS --dry-run"
           fi
