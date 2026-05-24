@@ -27,19 +27,38 @@ export default async function DirectoryPage({
   const q = (params.q ?? "").trim();
 
   let codes: Code[] = [];
+  let featured: Code[] = [];
   let total = 0;
   let error: string | null = null;
+
+  // Featured entries only show on page 1 and only when no filters are active —
+  // otherwise users expect the filter set to determine what they see.
+  const showFeatured = page === 1 && aiFilters.length === 0 && targetFilters.length === 0 && !q;
 
   if (!supabase) {
     error =
       "Supabase isn't configured yet — set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to load the directory.";
   } else {
+    if (showFeatured) {
+      const { data: featuredData } = await supabase
+        .from("codes")
+        .select("*")
+        .eq("approved", true)
+        .eq("featured", true)
+        .order("stars", { ascending: false });
+      featured = (featuredData ?? []) as Code[];
+    }
+
     let query = supabase
       .from("codes")
       .select("*", { count: "exact" })
       .eq("approved", true)
       .order("stars", { ascending: false })
       .range((page - 1) * PAGE_SIZE, page * PAGE_SIZE - 1);
+
+    // Exclude featured entries from the main grid when they're being shown
+    // above. Avoids duplicate rendering for the flagship entries.
+    if (showFeatured) query = query.eq("featured", false);
 
     if (aiFilters.length) query = query.overlaps("ai_platforms", aiFilters);
     if (targetFilters.length) query = query.overlaps("delivery_targets", targetFilters);
@@ -84,7 +103,7 @@ export default async function DirectoryPage({
             </div>
           )}
 
-          {!error && codes.length === 0 && (
+          {!error && codes.length === 0 && featured.length === 0 && (
             <div className="card text-center py-12">
               <div className="text-4xl mb-3">🪺</div>
               <p className="font-semibold mb-1">No entries yet</p>
@@ -100,12 +119,32 @@ export default async function DirectoryPage({
             </div>
           )}
 
+          {featured.length > 0 && (
+            <section className="mb-8">
+              <h2 className="text-xs uppercase tracking-wider text-[var(--color-orange-dark)] font-semibold mb-3">
+                ★ Featured
+              </h2>
+              <div className="grid sm:grid-cols-2 gap-4">
+                {featured.map((c) => (
+                  <CodeCard key={c.id} code={c} variant="featured" />
+                ))}
+              </div>
+            </section>
+          )}
+
           {codes.length > 0 && (
-            <div className="grid sm:grid-cols-2 gap-4">
-              {codes.map((c) => (
-                <CodeCard key={c.id} code={c} />
-              ))}
-            </div>
+            <>
+              {featured.length > 0 && (
+                <h2 className="text-xs uppercase tracking-wider text-[var(--color-ink-muted)] font-semibold mb-3">
+                  All entries
+                </h2>
+              )}
+              <div className="grid sm:grid-cols-2 gap-4">
+                {codes.map((c) => (
+                  <CodeCard key={c.id} code={c} />
+                ))}
+              </div>
+            </>
           )}
 
           {pageCount > 1 && (

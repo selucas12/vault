@@ -38,7 +38,12 @@ export default async function CodeDetailPage({
       </Link>
       <header className="mt-4 mb-6">
         <div className="flex items-start justify-between gap-3">
-          <h1 className="text-3xl font-bold">{code.title}</h1>
+          <div className="flex items-center gap-2">
+            {code.featured && (
+              <span className="badge badge-ai shrink-0">★ featured</span>
+            )}
+            <h1 className="text-3xl font-bold">{code.title}</h1>
+          </div>
           {code.last_verified_status === "working" ? (
             <span className="badge badge-verified shrink-0">✓ verified working</span>
           ) : code.last_verified_status === "broken" ? (
@@ -47,7 +52,17 @@ export default async function CodeDetailPage({
             <span className="badge badge-unverified shrink-0">unverified</span>
           )}
         </div>
-        <p className="text-[var(--color-ink-muted)] mt-2">{code.description}</p>
+        {code.editor_note && (
+          <div className="mt-4 card bg-orange-50 border-[var(--color-orange-light)]">
+            <div className="text-xs uppercase tracking-wider text-[var(--color-orange-dark)] font-semibold mb-1">
+              Why we picked it
+            </div>
+            <p className="text-sm text-[var(--color-ink)] italic">
+              &ldquo;{code.editor_note}&rdquo;
+            </p>
+          </div>
+        )}
+        <p className="text-[var(--color-ink-muted)] mt-3">{code.description}</p>
       </header>
 
       <div className="flex flex-wrap gap-1 mb-6">

@@ -45,6 +45,8 @@ export interface Code {
   updated_at: string;
   approved: boolean;
   category: string | null;
+  featured: boolean;
+  editor_note: string | null;
 }
 
 export interface Subscriber {

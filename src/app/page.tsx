@@ -1,9 +1,12 @@
 import Link from "next/link";
 import { getLemonSqueezyEnv } from "@/lib/env";
+import { getFlagshipEntry } from "@/lib/flagship";
 
-export default function Home() {
+export default async function Home() {
   const ls = getLemonSqueezyEnv();
   const checkoutReady = ls !== null;
+  const flagship = await getFlagshipEntry();
+  const flagshipHref = flagship ? `/code/${flagship.id}` : "/directory";
 
   return (
     <div>
@@ -66,14 +69,24 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Sample entry preview */}
+      {/* Flagship showcase — Cheesyboy is the lived-in example */}
       <section className="max-w-3xl mx-auto px-6 py-12">
-        <h2 className="text-2xl font-bold mb-6 text-center">What an entry looks like</h2>
-        <div className="card border-2 border-[var(--color-orange-light)]">
+        <div className="text-center mb-6">
+          <div className="text-xs uppercase tracking-wider text-[var(--color-orange-dark)] font-semibold mb-2">
+            ★ Featured entry
+          </div>
+          <h2 className="text-2xl font-bold">The one we use ourselves</h2>
+        </div>
+        <Link href={flagshipHref} className="card block border-2 border-[var(--color-orange-primary)] hover:shadow-lg transition-shadow">
           <div className="flex items-start justify-between mb-2">
             <h3 className="font-semibold text-lg">Cheesyboy</h3>
             <span className="badge badge-verified">✓ verified</span>
           </div>
+          {flagship?.editor_note && (
+            <p className="text-sm text-[var(--color-ink)] italic mb-3 border-l-2 border-[var(--color-orange-primary)] pl-3">
+              &ldquo;{flagship.editor_note}&rdquo;
+            </p>
+          )}
           <p className="text-sm text-[var(--color-ink-muted)] mb-3">
             Control Claude Code from Telegram. Approve permission prompts from your phone,
             stay reachable away from your desk.
@@ -85,10 +98,11 @@ export default function Home() {
           <pre className="bg-[var(--color-ink)] text-[var(--color-cream)] p-3 rounded text-xs font-mono overflow-x-auto">
             bash &lt;(curl -fsSL https://cheesyboy.dev/install.sh)
           </pre>
-          <div className="text-xs text-[var(--color-ink-muted)] mt-2">
-            ★ 0 · TypeScript · MIT
+          <div className="text-xs text-[var(--color-ink-muted)] mt-2 flex items-center justify-between">
+            <span>★ {flagship?.stars ?? 0} · TypeScript · MIT</span>
+            <span className="text-[var(--color-orange-dark)] font-semibold">View entry →</span>
           </div>
-        </div>
+        </Link>
       </section>
 
       {/* Pricing */}

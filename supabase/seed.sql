@@ -1,5 +1,6 @@
 -- Vault seed data — 5 hand-curated entries to prove the schema works.
--- Apply AFTER 0001_init.sql. Safe to re-run (uses ON CONFLICT on source_url).
+-- Apply AFTER 0001_init.sql and 0002_featured.sql. Safe to re-run
+-- (uses ON CONFLICT on source_url).
 --
 -- Embeddings are intentionally NULL — the scraper or a manual backfill
 -- (UPDATE codes SET embedding = ... ) will populate them. /api/search
@@ -11,7 +12,7 @@ insert into codes (
   ai_platforms, delivery_targets, install_command,
   language, github_url, stars, license, author,
   last_verified_at, last_verified_status,
-  approved, category
+  approved, category, featured, editor_note
 ) values
 -- 1. Cheesyboy itself — the parent product, ground truth for the schema.
 (
@@ -30,7 +31,9 @@ insert into codes (
   now(),
   'working',
   true,
-  'featured'
+  'featured',
+  true,
+  'The reason Vault exists. We use this every day to keep working from anywhere — Claude Code in tmux on the Mac mini, permission prompts on the phone. The only Telegram bridge we trust with our own builds.'
 ),
 -- 2. yym68686/ChatGPT-Telegram-Bot — multi-model bot (GPT, Claude, Gemini, Groq).
 (
@@ -49,7 +52,9 @@ insert into codes (
   now(),
   'working',
   true,
-  'multi-model'
+  'multi-model',
+  false,
+  null
 ),
 -- 3. n3d1117/chatgpt-telegram-bot — the classic OpenAI-only Telegram bot.
 (
@@ -68,7 +73,9 @@ insert into codes (
   now(),
   'working',
   true,
-  'openai-classic'
+  'openai-classic',
+  false,
+  null
 ),
 -- 4. father-bot/chatgpt_telegram_bot — long-running conversational bot with memory.
 (
@@ -87,7 +94,9 @@ insert into codes (
   now(),
   'working',
   true,
-  'conversational'
+  'conversational',
+  false,
+  null
 ),
 -- 5. A Gemini Telegram bot — proves we cover the non-OpenAI side.
 (
@@ -106,7 +115,9 @@ insert into codes (
   now(),
   'working',
   true,
-  'gemini'
+  'gemini',
+  false,
+  null
 )
 on conflict (source_url) do update set
   title = excluded.title,
@@ -123,4 +134,6 @@ on conflict (source_url) do update set
   last_verified_status = excluded.last_verified_status,
   approved = excluded.approved,
   category = excluded.category,
+  featured = excluded.featured,
+  editor_note = excluded.editor_note,
   updated_at = now();
