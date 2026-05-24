@@ -28,6 +28,7 @@ import { pipedreamSource } from "./sources/pipedream";
 import { makeSource } from "./sources/make";
 import { embedText } from "./embed";
 import { getDb } from "./db";
+import { normalizeSourceUrl } from "./normalize";
 import type { RawEntry, SourceModule } from "./types";
 
 const ALL_SOURCES: SourceModule[] = [
@@ -78,8 +79,10 @@ async function main() {
     console.error("Refusing to run without Supabase env vars. Set NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY.");
     process.exit(2);
   }
-  const existing = db ? await db.existingSourceUrls() : new Set<string>();
-  console.log(`Existing entries: ${existing.size}`);
+  const { urls: existing, manual: manualUrls } = db
+    ? await db.existingSourceUrls()
+    : { urls: new Set<string>(), manual: new Set<string>() };
+  console.log(`Existing entries: ${existing.size} (${manualUrls.size} manual/seed — protected from overwrite)`);
 
   let totalNew = 0;
   for (const src of sources) {
@@ -103,6 +106,11 @@ async function main() {
     let updatedCount = 0;
     for (const e of entries) {
       if (totalNew >= args.limit) break;
+      // Normalize URL to prevent collisions between seed and scraped entries.
+      e.source_url = normalizeSourceUrl(e.source_url);
+      if (e.github_url) e.github_url = normalizeSourceUrl(e.github_url);
+      // Never overwrite hand-curated seed/manual entries.
+      if (manualUrls.has(e.source_url)) continue;
       const isNew = !existing.has(e.source_url);
       const embedSource = `${e.title}\n${e.description ?? ""}\nAI: ${e.ai_platforms.join(",")}\nTarget: ${e.delivery_targets.join(",")}`;
       let embedding: number[] | null = null;

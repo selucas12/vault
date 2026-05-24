@@ -11,7 +11,7 @@ export interface DbHandle {
     entries_updated: number;
     errors: string[];
   }): Promise<void>;
-  existingSourceUrls(): Promise<Set<string>>;
+  existingSourceUrls(): Promise<{ urls: Set<string>; manual: Set<string> }>;
 }
 
 export function getDb(): DbHandle | null {
@@ -36,19 +36,24 @@ export function getDb(): DbHandle | null {
       await supabase.from("scrape_runs").insert(stats);
     },
     async existingSourceUrls() {
-      const out = new Set<string>();
+      const urls = new Set<string>();
+      const manual = new Set<string>();
       const pageSize = 1000;
       for (let from = 0; ; from += pageSize) {
         const { data, error } = await supabase
           .from("codes")
-          .select("source_url")
+          .select("source_url, source_type")
           .range(from, from + pageSize - 1);
         if (error) throw error;
         if (!data || data.length === 0) break;
-        for (const row of data) out.add(row.source_url as string);
+        for (const row of data) {
+          const url = row.source_url as string;
+          urls.add(url);
+          if ((row.source_type as string) === "manual") manual.add(url);
+        }
         if (data.length < pageSize) break;
       }
-      return out;
+      return { urls, manual };
     },
   };
 }
