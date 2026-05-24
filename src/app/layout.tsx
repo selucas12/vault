@@ -3,6 +3,7 @@ import Link from "next/link";
 import "./globals.css";
 import { getSiteUrl } from "@/lib/env";
 import { MobileNav } from "@/components/MobileNav";
+import { NavUser } from "@/components/NavUser";
 import { PlausibleProvider } from "@/components/PlausibleProvider";
 
 const SITE_URL = getSiteUrl().replace(/\/$/, "");
@@ -71,6 +72,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <Link href="/search" className="hover:text-[var(--color-orange-primary)]">
                 AI Search
               </Link>
+              <NavUser />
               <Link href="/account" className="hover:text-[var(--color-orange-primary)]">
                 Account
               </Link>

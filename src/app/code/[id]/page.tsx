@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { CopyButton } from "@/components/CopyButton";
 import { JsonLd } from "@/components/JsonLd";
 import { EmailCaptureCTA } from "@/components/EmailCaptureCTA";
+import { SaveButton } from "@/components/SaveButton";
 import { getSupabaseServer } from "@/lib/supabase/server";
 import { getSiteUrl, getTallyFormId } from "@/lib/env";
 import type { Code } from "@/lib/types";
@@ -75,6 +76,19 @@ export default async function CodeDetailPage({
   const code = data as Code;
   const siteUrl = getSiteUrl().replace(/\/$/, "");
 
+  // Check if current user has saved this entry.
+  let isSaved = false;
+  const { data: { user } } = await supabase.auth.getUser();
+  if (user) {
+    const { data: savedRow } = await supabase
+      .from("saved_codes")
+      .select("code_id")
+      .eq("user_id", user.id)
+      .eq("code_id", id)
+      .maybeSingle();
+    isSaved = !!savedRow;
+  }
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
@@ -135,18 +149,21 @@ export default async function CodeDetailPage({
         <p className="text-[var(--color-ink-muted)] mt-3">{code.description}</p>
       </header>
 
-      <div className="flex flex-wrap gap-1 mb-6">
-        {code.ai_platforms.map((p) => (
-          <span key={p} className="badge badge-ai">
-            {p}
-          </span>
-        ))}
-        {code.delivery_targets.map((t) => (
-          <span key={t} className="badge badge-target">
-            {t}
-          </span>
-        ))}
-        {code.category && <span className="badge">{code.category}</span>}
+      <div className="flex items-center justify-between gap-3 mb-6">
+        <div className="flex flex-wrap gap-1">
+          {code.ai_platforms.map((p) => (
+            <span key={p} className="badge badge-ai">
+              {p}
+            </span>
+          ))}
+          {code.delivery_targets.map((t) => (
+            <span key={t} className="badge badge-target">
+              {t}
+            </span>
+          ))}
+          {code.category && <span className="badge">{code.category}</span>}
+        </div>
+        <SaveButton codeId={code.id} initialSaved={isSaved} />
       </div>
 
       {code.install_command && (
