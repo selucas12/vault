@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import type { Metadata } from "next";
 import { getLemonSqueezyEnv, getSiteUrl, getTallyFormId } from "@/lib/env";
 import { getFlagshipEntry } from "@/lib/flagship";
@@ -48,7 +49,15 @@ export default async function Home() {
       />
       {/* Hero */}
       <section className="max-w-6xl mx-auto px-6 pt-20 pb-12 text-center">
-        <div className="text-5xl mb-6">🗝️🐈</div>
+        <div className="mb-6 flex justify-center">
+          <Image
+            src="/cheesy/cheesy%20image%20logo.png"
+            alt="Cheesyboy"
+            width={128}
+            height={128}
+            priority
+          />
+        </div>
         <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-4">
           Stop hunting GitHub for AI integrations.
         </h1>

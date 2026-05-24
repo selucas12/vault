@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import "./globals.css";
 import { getSiteUrl } from "@/lib/env";
@@ -59,7 +60,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <header className="border-b border-[var(--color-border)] bg-[var(--color-cream)]/80 backdrop-blur sticky top-0 z-10 relative">
           <nav className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
             <Link href="/" className="flex items-center gap-2 font-semibold text-lg">
-              <span className="text-2xl">🗝️</span>
+              <Image
+                src="/cheesy/circle%20cheesy%20160x160.png"
+                alt="Cheesyboy"
+                width={32}
+                height={32}
+                className="rounded-full"
+              />
               <span>Vault</span>
               <span className="text-xs font-normal text-[var(--color-ink-muted)] hidden sm:inline">
                 by Cheesyboy
@@ -88,7 +95,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <div className="max-w-6xl mx-auto px-6 py-8 text-sm text-[var(--color-ink-muted)]">
             <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-6">
               <div>
-                <div className="font-semibold text-[var(--color-ink)] mb-1">Vault</div>
+                <div className="font-semibold text-[var(--color-ink)] mb-1 flex items-center gap-1.5">
+                  <Image
+                    src="/cheesy/circle%20cheesy%20160x160.png"
+                    alt="Cheesyboy"
+                    width={20}
+                    height={20}
+                    className="rounded-full"
+                  />
+                  Vault
+                </div>
                 <div>
                   A{" "}
                   <a href="https://cheesyboy.dev" className="underline hover:text-[var(--color-orange-primary)]">
