@@ -45,3 +45,13 @@ export function getGithubToken() {
 export function getSiteUrl() {
   return process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 }
+
+export function getTallyFormId(): string | null {
+  const id = process.env.NEXT_PUBLIC_TALLY_VAULT_FORM_ID;
+  if (!id || id.trim() === "") return null;
+  return id.trim();
+}
+
+export function getAdminEmail(): string {
+  return process.env.ADMIN_EMAIL ?? "stephen@bubblesllc.com";
+}

@@ -3,8 +3,9 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { CopyButton } from "@/components/CopyButton";
 import { JsonLd } from "@/components/JsonLd";
+import { EmailCaptureCTA } from "@/components/EmailCaptureCTA";
 import { getSupabaseServer } from "@/lib/supabase/server";
-import { getSiteUrl } from "@/lib/env";
+import { getSiteUrl, getTallyFormId } from "@/lib/env";
 import type { Code } from "@/lib/types";
 
 async function fetchEntry(id: string): Promise<Code | null> {
@@ -193,6 +194,8 @@ export default async function CodeDetailPage({
           and we&apos;ll update the entry.
         </div>
       </section>
+
+      <EmailCaptureCTA formId={getTallyFormId()} variant="compact" />
     </article>
   );
 }

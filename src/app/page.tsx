@@ -1,8 +1,9 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { getLemonSqueezyEnv, getSiteUrl } from "@/lib/env";
+import { getLemonSqueezyEnv, getSiteUrl, getTallyFormId } from "@/lib/env";
 import { getFlagshipEntry } from "@/lib/flagship";
 import { JsonLd } from "@/components/JsonLd";
+import { EmailCaptureCTA } from "@/components/EmailCaptureCTA";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/" },
@@ -14,6 +15,7 @@ export default async function Home() {
   const flagship = await getFlagshipEntry();
   const flagshipHref = flagship ? `/code/${flagship.id}` : "/directory";
   const siteUrl = getSiteUrl().replace(/\/$/, "");
+  const tallyFormId = getTallyFormId();
 
   return (
     <div>
@@ -206,6 +208,11 @@ export default async function Home() {
         <Link href="/directory" className="btn-ghost">
           Start browsing →
         </Link>
+      </section>
+
+      {/* Email capture */}
+      <section className="px-6 pb-16">
+        <EmailCaptureCTA formId={tallyFormId} />
       </section>
     </div>
   );

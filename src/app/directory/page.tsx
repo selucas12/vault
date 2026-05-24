@@ -2,7 +2,9 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { CodeCard } from "@/components/CodeCard";
 import { FilterBar } from "@/components/FilterBar";
+import { EmailCaptureCTA } from "@/components/EmailCaptureCTA";
 import { getSupabaseServer } from "@/lib/supabase/server";
+import { getTallyFormId } from "@/lib/env";
 import type { Code } from "@/lib/types";
 
 export const metadata: Metadata = {
@@ -182,6 +184,8 @@ export default async function DirectoryPage({
               )}
             </nav>
           )}
+
+          <EmailCaptureCTA formId={getTallyFormId()} variant="compact" />
         </section>
       </div>
     </div>
