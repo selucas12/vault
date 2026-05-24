@@ -82,9 +82,9 @@ export default async function AccountPage() {
       <section className="card mb-4">
         <div className="text-xs uppercase tracking-wider text-[var(--color-ink-muted)] mb-2">Manage</div>
         <div className="flex flex-wrap gap-2">
-          {state.subscriber?.ls_customer_id && (
+          {state.active && (
             <a
-              href={`https://cheesyboy.lemonsqueezy.com/billing`}
+              href={`https://cheesyboy.lemonsqueezy.com/billing?email=${encodeURIComponent(user.email ?? "")}`}
               className="btn-ghost text-sm"
               target="_blank"
               rel="noreferrer"

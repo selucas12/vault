@@ -153,14 +153,16 @@ export default async function Home() {
             <div className="text-4xl font-bold my-3">
               $9.99 <span className="text-base font-normal text-[var(--color-ink-muted)]">/mo</span>
             </div>
-            <ul className="text-sm text-[var(--color-ink-muted)] space-y-1 mb-4">
+            <ul className="text-sm text-[var(--color-ink-muted)] space-y-2 mb-6">
               <li>✓ Full directory access</li>
-              <li>✓ AI-assisted search</li>
+              <li>✓ AI-assisted search with reasoning</li>
               <li>✓ Daily updates</li>
               <li>✓ Save your shortlist</li>
+              <li>✓ Cancel anytime</li>
+              <li>✓ <a href="/refund" className="underline">30-day refund</a></li>
             </ul>
             {checkoutReady ? (
-              <CheckoutButton action={checkoutMonthly} label="Subscribe monthly" />
+              <CheckoutButton action={checkoutMonthly} label="Get Vault Monthly" />
             ) : (
               <button disabled className="btn-primary w-full" title="Pricing locks once the LemonSqueezy product is created">
                 Coming soon
@@ -168,19 +170,21 @@ export default async function Home() {
             )}
           </div>
           <div className="card border-2 border-[var(--color-orange-primary)] relative">
-            <div className="absolute -top-3 right-3 badge badge-ai">save 17%</div>
+            <div className="absolute -top-3 right-3 badge badge-ai font-semibold">Best value — save 17%</div>
             <h3 className="font-semibold text-lg">Annual</h3>
             <div className="text-4xl font-bold my-3">
               $99 <span className="text-base font-normal text-[var(--color-ink-muted)]">/yr</span>
             </div>
-            <ul className="text-sm text-[var(--color-ink-muted)] space-y-1 mb-4">
+            <ul className="text-sm text-[var(--color-ink-muted)] space-y-2 mb-6">
               <li>✓ Everything in Monthly</li>
               <li>✓ Two months free</li>
               <li>✓ Early access to new features</li>
-              <li>✓ Direct support to meow@cheesyboy.dev</li>
+              <li>✓ Direct support — meow@cheesyboy.dev</li>
+              <li>✓ Cancel anytime</li>
+              <li>✓ <a href="/refund" className="underline">30-day refund</a></li>
             </ul>
             {checkoutReady ? (
-              <CheckoutButton action={checkoutAnnual} label="Subscribe yearly" />
+              <CheckoutButton action={checkoutAnnual} label="Get Vault Annual" />
             ) : (
               <button disabled className="btn-primary w-full" title="Pricing locks once the LemonSqueezy product is created">
                 Coming soon
