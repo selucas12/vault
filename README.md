@@ -1,3 +1,140 @@
+# VALIDATE THIS BUILD (start here)
+
+You're returning to a half-wired build. Walk these eight steps in order. Each step shows the **exact command**, the **expected output**, and a **debug hint** if it doesn't match. Skip ahead if you already did one.
+
+> Time budget: ~30 min if everything is happy, ~60 min if Supabase migration friction. Anything longer than that, stop and check the debug hints.
+
+## Step 1 — Create the Supabase project (web UI)
+
+1. Open `https://supabase.com/dashboard` and create a new project named **vault**. Region `us-east-1`. Database password: save it somewhere safe.
+2. Wait until provisioning finishes (1-2 min).
+3. Settings → API → copy the **Project URL** + **anon public** key + **service_role secret** key.
+4. Settings → Database → copy the **Connection string (URI)** — you'll use it for psql.
+
+**Expected:** a green Supabase project dashboard showing 0 tables.
+**If stuck:** confirm you're signed in to the right Supabase account. There's no CLI shortcut for project creation; this step is intentionally manual.
+
+## Step 2 — Apply the schema migration
+
+The migration is at `supabase/migrations/0001_init.sql`. Either path works:
+
+**Option A — psql (recommended, no extra install):**
+
+```bash
+# Replace the URL with the connection string you copied in step 1.
+# Note: use the "URI" connection string, not the "Direct" one.
+psql "postgres://postgres.YOURPROJECTREF:YOURPASSWORD@aws-0-us-east-1.pooler.supabase.com:6543/postgres" \
+  -f supabase/migrations/0001_init.sql
+```
+
+**Option B — Supabase SQL editor (UI):**
+
+1. Supabase dashboard → SQL Editor → New query.
+2. Paste the contents of `supabase/migrations/0001_init.sql`. Run.
+
+**Expected:** `CREATE EXTENSION`, `CREATE TABLE`, `CREATE INDEX`, `CREATE POLICY`, `CREATE FUNCTION` notices. No errors.
+**If stuck:** `extension "vector" does not exist` → Supabase enables it on first use; just rerun. Permission denied → make sure the connection string is the pooler URI (`...pooler.supabase.com:6543`), not the direct one.
+
+## Step 3 — Fill four env vars in `.env.local`
+
+```bash
+cp .env.example .env.local
+```
+
+Edit `.env.local` and set these four — leave everything else blank for now:
+
+| Var | Value |
+|---|---|
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase Project URL |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anon public key |
+| `SUPABASE_SERVICE_ROLE_KEY` | Supabase service_role secret key (server-only) |
+| `OPENAI_API_KEY` | An OpenAI API key (needed for `npm run scrape` to embed entries) |
+
+**Expected:** `.env.local` exists with four non-empty values.
+**If stuck:** the anon key and service-role key look similar but the service-role key starts with `eyJ...` and is much longer. The anon one is fine in browser code; the service one must never reach the browser.
+
+## Step 4 — Install dependencies and start the dev server
+
+```bash
+npm install
+npm run dev
+```
+
+**Expected:** dev server listening on `http://localhost:3000`, landing page renders with the orange "Stop hunting GitHub for AI integrations." hero. `/directory` shows a yellow "Supabase isn't configured" banner if env vars aren't loaded yet (Ctrl-C and restart `npm run dev` to pick up `.env.local`).
+
+**If stuck:** `Module not found '@supabase/ssr'` → `rm -rf node_modules && npm install` from a clean slate. Tailwind classes not applying → confirm `globals.css` was untouched and `@import "tailwindcss"` is at the top.
+
+## Step 5 — Load the seed data
+
+```bash
+psql "postgres://postgres.YOURPROJECTREF:YOURPASSWORD@aws-0-us-east-1.pooler.supabase.com:6543/postgres" \
+  -f supabase/seed.sql
+```
+
+Five hand-curated entries get inserted: Cheesyboy itself + 4 real Telegram-AI bots from yym68686, n3d1117, father-bot, and H-T-H. All `approved=true`, all `last_verified_status='working'`.
+
+**Expected:** `INSERT 0 5` (or `INSERT 0 0` and 5 update notices if you re-ran). No errors.
+**If stuck:** `relation "codes" does not exist` → step 2 didn't actually run. Re-run step 2.
+
+## Step 6 — Verify the directory page
+
+Open `http://localhost:3000/directory` in your browser (no env reload needed; server components re-query Supabase on every request).
+
+**Expected:** five cards, sorted by stars descending. Top card is `chatgpt_telegram_bot` (8.4k ★), then `chatgpt-telegram-bot` (3.8k), `ChatGPT-Telegram-Bot` (3.2k), `Gemini-Telegram-Bot` (420), `Cheesyboy` (0). Each card shows AI badges (`gpt`/`claude`/`gemini`) and `telegram` target. Filter chips on the left toggle correctly when clicked.
+
+**If stuck:** "Directory is offline" banner → env vars didn't load. Restart `npm run dev`. Empty grid → run `psql ... -c 'select count(*) from codes;'` — should return 5. If 0, step 5 didn't actually insert.
+
+## Step 7 — Run the scraper once
+
+```bash
+npm run scrape -- --limit 50
+```
+
+**Expected:** ~3-6 minutes. Each source logs its progress. Final line `Total new entries this run: 30-50`. The first run is slow because the GitHub API is unauthenticated → 60 req/hr. Set `GITHUB_TOKEN` in `.env.local` to unblock to 5000/hr.
+
+After it finishes:
+
+```bash
+psql "$YOUR_URL" -c "select count(*) from codes;"
+# Expected: 35-55 rows total (5 seed + 30-50 scraped).
+```
+
+**If stuck:**
+- `Refusing to run without Supabase env vars` → `.env.local` not picked up. The scraper reads from `process.env`; either source it (`set -a; source .env.local; set +a`) or set the vars inline.
+- GitHub 403 rate limit → wait an hour or set `GITHUB_TOKEN`.
+- OpenAI 401 → invalid `OPENAI_API_KEY`. Embeddings will be `null` and `/search` will return no matches.
+
+## Step 8 — Try AI search end-to-end
+
+This step needs one more env var:
+
+```bash
+# Add to .env.local:
+ANTHROPIC_API_KEY=sk-ant-...
+```
+
+Then restart `npm run dev` and open `http://localhost:3000/search`. Type:
+
+```
+telegram bot for claude
+```
+
+**Expected (logged-out):** one teaser result (Cheesyboy or yym68686's bot), `install_command` hidden, paywall CTA banner above.
+**Expected (subscribed, after Tier-4 wire-up):** 2-3 ranked results, each with a `Why this fits:` line written by Claude, install command visible.
+
+**If stuck:**
+- `{"ok":false,"reason":"no-anthropic"}` → key missing or invalid.
+- 0 results → embeddings are `null`. Run `psql ... -c "select count(*) from codes where embedding is null;"` — should return 0 after a successful scrape. If non-zero, the scraper hit an OpenAI failure mid-run.
+- Anthropic JSON parse error → model returned prose instead of JSON. The route soft-falls-back to unranked vector matches; refresh the page to see them.
+
+---
+
+Once steps 1-8 are all green, the foundation is validated and you can resume building the deferred items (install verification, admin queue, streaming search, etc.) on solid ground.
+
+The rest of this README is the original build doc — keep reading for the LemonSqueezy + DNS + GitHub Actions wiring.
+
+---
+
 # Vault — the curated AI ↔ chat-platform integration index
 
 A subscription-gated directory of tools that connect AI (Claude, GPT, Gemini, Groq, …) to chat platforms (Telegram, Slack, Discord, WhatsApp, iMessage, …), with AI-assisted search.
@@ -46,6 +183,20 @@ supabase/migrations/    SQL migrations (run in Supabase SQL editor)
 .github/workflows/
   ci.yml                Lint + build on PR + push
   scrape.yml            Daily 09:00 UTC scrape + manual dispatch
+```
+
+## Helper scripts
+
+Two one-liner scripts handle the irreversible steps the autonomous build deferred:
+
+- `scripts/make-repo-public.sh` — flips `selucas12/vault` from private → public via `gh repo edit`. Prompts y/N before doing it. Manual fallback: `github.com/selucas12/vault/settings` → Danger Zone → Change visibility → Public.
+- `scripts/disable-vercel-protection.sh` — disables Vercel team SSO on the production deployment so the URL is world-readable. Uses the local Vercel auth token. Manual fallback: `vercel.com/cheesyboy/vault/settings/deployment-protection` → set to "Disabled" or "Only Preview Deployments."
+
+Run them from the repo root:
+
+```bash
+./scripts/make-repo-public.sh
+./scripts/disable-vercel-protection.sh
 ```
 
 ## Post-build setup — steps Stephen must do
