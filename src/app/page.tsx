@@ -1,65 +1,166 @@
-import Image from "next/image";
+import Link from "next/link";
+import { getLemonSqueezyEnv } from "@/lib/env";
 
 export default function Home() {
+  const ls = getLemonSqueezyEnv();
+  const checkoutReady = ls !== null;
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <div>
+      {/* Hero */}
+      <section className="max-w-6xl mx-auto px-6 pt-20 pb-12 text-center">
+        <div className="text-5xl mb-6">🗝️🐈</div>
+        <h1 className="text-5xl sm:text-6xl font-bold tracking-tight mb-4">
+          Stop hunting GitHub for AI integrations.
+        </h1>
+        <p className="text-xl text-[var(--color-ink-muted)] max-w-2xl mx-auto mb-8">
+          Vault is the curated index of tools that connect{" "}
+          <span className="text-[var(--color-orange-dark)] font-semibold">Claude, GPT, Gemini</span>{" "}
+          and other AI to{" "}
+          <span className="text-[var(--color-orange-dark)] font-semibold">
+            Telegram, Slack, Discord, WhatsApp, iMessage
+          </span>
+          . Search in plain English. Install in one line.
+        </p>
+        <div className="flex flex-wrap gap-3 justify-center">
+          <Link href="/search" className="btn-primary">
+            Try AI Search →
+          </Link>
+          <Link href="/directory" className="btn-ghost">
+            Browse the directory
+          </Link>
+        </div>
+        <p className="text-xs text-[var(--color-ink-muted)] mt-6">
+          $9.99/mo · $99/yr · cancel any time · 30-day guarantee
+        </p>
+      </section>
+
+      {/* What is Vault */}
+      <section className="max-w-6xl mx-auto px-6 py-12">
+        <h2 className="text-3xl font-bold mb-8 text-center">Why Vault?</h2>
+        <div className="grid sm:grid-cols-3 gap-4">
+          <div className="card">
+            <div className="text-2xl mb-2">🤖</div>
+            <h3 className="font-semibold text-lg mb-1">Curated, not scraped</h3>
+            <p className="text-sm text-[var(--color-ink-muted)]">
+              Hand-picked from awesome-lists, GitHub topics, and Hugging Face. Auto-verified
+              when we can install it. Manually reviewed when we can&apos;t.
+            </p>
+          </div>
+          <div className="card">
+            <div className="text-2xl mb-2">🔍</div>
+            <h3 className="font-semibold text-lg mb-1">Search in English</h3>
+            <p className="text-sm text-[var(--color-ink-muted)]">
+              Type what you want — &ldquo;I want Claude to message me on Slack when CI
+              fails&rdquo; — and our AI matches you to the right tool with reasoning.
+            </p>
+          </div>
+          <div className="card">
+            <div className="text-2xl mb-2">⚡</div>
+            <h3 className="font-semibold text-lg mb-1">One-line install</h3>
+            <p className="text-sm text-[var(--color-ink-muted)]">
+              Every entry has a copy-paste install command. No clone-this-then-read-the-readme
+              detective work. We did the work.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Sample entry preview */}
+      <section className="max-w-3xl mx-auto px-6 py-12">
+        <h2 className="text-2xl font-bold mb-6 text-center">What an entry looks like</h2>
+        <div className="card border-2 border-[var(--color-orange-light)]">
+          <div className="flex items-start justify-between mb-2">
+            <h3 className="font-semibold text-lg">Cheesyboy</h3>
+            <span className="badge badge-verified">✓ verified</span>
+          </div>
+          <p className="text-sm text-[var(--color-ink-muted)] mb-3">
+            Control Claude Code from Telegram. Approve permission prompts from your phone,
+            stay reachable away from your desk.
           </p>
+          <div className="flex flex-wrap gap-1 mb-3">
+            <span className="badge badge-ai">claude</span>
+            <span className="badge badge-target">telegram</span>
+          </div>
+          <pre className="bg-[var(--color-ink)] text-[var(--color-cream)] p-3 rounded text-xs font-mono overflow-x-auto">
+            bash &lt;(curl -fsSL https://cheesyboy.dev/install.sh)
+          </pre>
+          <div className="text-xs text-[var(--color-ink-muted)] mt-2">
+            ★ 0 · TypeScript · MIT
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </section>
+
+      {/* Pricing */}
+      <section id="pricing" className="max-w-3xl mx-auto px-6 py-12">
+        <h2 className="text-3xl font-bold mb-2 text-center">Pricing</h2>
+        <p className="text-center text-[var(--color-ink-muted)] mb-8">
+          Cancel anytime. 30-day money-back guarantee.
+        </p>
+        <div className="grid sm:grid-cols-2 gap-4">
+          <div className="card">
+            <h3 className="font-semibold text-lg">Monthly</h3>
+            <div className="text-4xl font-bold my-3">
+              $9.99 <span className="text-base font-normal text-[var(--color-ink-muted)]">/mo</span>
+            </div>
+            <ul className="text-sm text-[var(--color-ink-muted)] space-y-1 mb-4">
+              <li>✓ Full directory access</li>
+              <li>✓ AI-assisted search</li>
+              <li>✓ Daily updates</li>
+              <li>✓ Save your shortlist</li>
+            </ul>
+            {checkoutReady ? (
+              <a href={ls.monthly} className="btn-primary w-full">
+                Subscribe monthly
+              </a>
+            ) : (
+              <button disabled className="btn-primary w-full" title="Pricing locks once the LemonSqueezy product is created">
+                Coming soon
+              </button>
+            )}
+          </div>
+          <div className="card border-2 border-[var(--color-orange-primary)] relative">
+            <div className="absolute -top-3 right-3 badge badge-ai">save 17%</div>
+            <h3 className="font-semibold text-lg">Annual</h3>
+            <div className="text-4xl font-bold my-3">
+              $99 <span className="text-base font-normal text-[var(--color-ink-muted)]">/yr</span>
+            </div>
+            <ul className="text-sm text-[var(--color-ink-muted)] space-y-1 mb-4">
+              <li>✓ Everything in Monthly</li>
+              <li>✓ Two months free</li>
+              <li>✓ Early access to new features</li>
+              <li>✓ Direct support to meow@cheesyboy.dev</li>
+            </ul>
+            {checkoutReady ? (
+              <a href={ls.annual} className="btn-primary w-full">
+                Subscribe yearly
+              </a>
+            ) : (
+              <button disabled className="btn-primary w-full" title="Pricing locks once the LemonSqueezy product is created">
+                Coming soon
+              </button>
+            )}
+          </div>
         </div>
-      </main>
+        {!checkoutReady && (
+          <p className="text-xs text-[var(--color-ink-muted)] text-center mt-4">
+            Pricing buttons activate as soon as the LemonSqueezy product is created.
+          </p>
+        )}
+      </section>
+
+      {/* CTA */}
+      <section className="max-w-3xl mx-auto px-6 py-16 text-center">
+        <h2 className="text-2xl font-bold mb-3">No fluff. Just the integrations that actually work.</h2>
+        <p className="text-[var(--color-ink-muted)] mb-6">
+          Vault is built by the same indie shop behind{" "}
+          <a href="https://cheesyboy.dev" className="text-[var(--color-orange-dark)] underline">Cheesyboy</a>.
+          We use it ourselves. Daily.
+        </p>
+        <Link href="/directory" className="btn-ghost">
+          Start browsing →
+        </Link>
+      </section>
     </div>
   );
 }
