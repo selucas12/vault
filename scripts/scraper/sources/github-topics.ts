@@ -10,11 +10,26 @@ const QUERIES = [
   "topic:telegram-bot claude",
   "topic:telegram-bot gemini",
   "topic:telegram-bot groq",
+  "topic:telegram-bot llama",
+  "topic:telegram-bot mistral",
+  "topic:telegram-bot deepseek",
   "topic:slack-bot openai",
   "topic:slack-bot claude",
+  "topic:slack-bot gemini",
+  "topic:slack-bot llm",
   "topic:discord-bot openai",
   "topic:discord-bot claude",
+  "topic:discord-bot gemini",
+  "topic:discord-bot llm",
   "topic:whatsapp-bot openai",
+  "topic:whatsapp-bot claude",
+  "topic:whatsapp-bot chatgpt",
+  "topic:teams-bot openai",
+  "topic:teams-bot chatgpt",
+  "topic:imessage openai",
+  "topic:chatgpt-bot telegram",
+  "topic:chatgpt-bot discord",
+  "topic:chatgpt-bot slack",
 ];
 
 interface SearchHit {
@@ -42,7 +57,7 @@ async function search(q: string): Promise<SearchHit[]> {
     "x-github-api-version": "2022-11-28",
   };
   if (token) headers.authorization = `Bearer ${token}`;
-  const url = `https://api.github.com/search/repositories?q=${encodeURIComponent(q)}&sort=stars&order=desc&per_page=10`;
+  const url = `https://api.github.com/search/repositories?q=${encodeURIComponent(q)}&sort=stars&order=desc&per_page=30`;
   const res = await fetch(url, { headers });
   if (!res.ok) return [];
   const data = (await res.json()) as SearchResponse;
@@ -54,7 +69,7 @@ const throttledSearch = throttle(search);
 export const githubTopicsSource: SourceModule = {
   type: "github-topic",
   name: "GitHub topic search",
-  maxEntries: 60,
+  maxEntries: 150,
   autoApprove: false,
   async run({ limit, logger }) {
     const out: RawEntry[] = [];
