@@ -16,10 +16,13 @@ on:
           - ""
           - github-awesome
           - github-topic
+          - github-search
           - huggingface
           - n8n
           - pipedream
           - make
+          - npm
+          - gitlab
         default: ""
       dry_run:
         description: "Dry run (no DB writes)"
@@ -34,6 +37,7 @@ jobs:
       NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
       SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
       GITHUB_TOKEN: ${{ secrets.SCRAPER_GITHUB_TOKEN || secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v5
@@ -53,3 +57,6 @@ jobs:
             ARGS="$ARGS --dry-run"
           fi
           npm run scrape -- $ARGS
+      - name: Score new entries
+        if: ${{ github.event.inputs.dry_run != 'true' }}
+        run: npm run quality -- --limit 200
