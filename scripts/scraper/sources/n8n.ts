@@ -68,16 +68,16 @@ async function fetchPage(page: number): Promise<N8nWorkflowSummary[]> {
   const url = `${BASE}?page=${page}&rows=${ROWS_PER_PAGE}`;
   const res = await fetch(url, { headers: { "user-agent": "vault-scraper" } });
   if (!res.ok) return [];
-  const data = (await res.json()) as { data?: { workflows?: N8nWorkflowSummary[] } };
-  return data?.data?.workflows ?? [];
+  const data = (await res.json()) as { workflows?: N8nWorkflowSummary[] };
+  return data?.workflows ?? [];
 }
 
 async function fetchDetail(id: number): Promise<N8nWorkflowDetail | null> {
   const url = `${BASE}/${id}`;
   const res = await fetch(url, { headers: { "user-agent": "vault-scraper" } });
   if (!res.ok) return null;
-  const data = (await res.json()) as { data?: N8nWorkflowDetail };
-  return data?.data ?? null;
+  const data = (await res.json()) as { workflow?: N8nWorkflowDetail };
+  return data?.workflow ?? null;
 }
 
 const throttledPage = throttle(fetchPage);
