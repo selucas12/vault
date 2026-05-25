@@ -29,7 +29,7 @@ export default async function Home() {
             "@type": "Organization",
             name: "Vault",
             url: siteUrl,
-            logo: `${siteUrl}/icon.svg`,
+            logo: `${siteUrl}/icon.png`,
             email: "meow@cheesyboy.dev",
             sameAs: ["https://cheesyboy.dev", "https://github.com/selucas12/vault"],
             parentOrganization: { "@type": "Organization", name: "Cheesyboy", url: "https://cheesyboy.dev" },

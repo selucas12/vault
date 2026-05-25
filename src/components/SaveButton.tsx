@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toggleSaved } from "@/lib/actions/saved";
 
@@ -77,9 +78,9 @@ export function SaveButton({
       {message && (
         <p className="text-xs text-[var(--color-orange-dark)] mt-2">
           {message}{" "}
-          <a href="/#pricing" className="underline font-semibold">
+          <Link href="/#pricing" className="underline font-semibold">
             Subscribe →
-          </a>
+          </Link>
         </p>
       )}
     </div>
