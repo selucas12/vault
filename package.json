@@ -9,6 +9,8 @@
     "lint": "eslint",
     "scrape": "tsx scripts/scraper/index.ts",
     "scrape:dry": "tsx scripts/scraper/index.ts --dry-run --limit 20",
+    "quality": "tsx scripts/quality-score.ts",
+    "quality:dry": "tsx scripts/quality-score.ts --dry-run --limit 20",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
