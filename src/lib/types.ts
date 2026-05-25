@@ -21,12 +21,15 @@ export type VerificationStatus = "working" | "broken" | "unverified";
 export type SourceType =
   | "github-awesome"
   | "github-topic"
+  | "github-search"
   | "huggingface"
   | "reddit"
   | "manual"
   | "n8n"
   | "pipedream"
-  | "make";
+  | "make"
+  | "npm"
+  | "gitlab";
 
 export interface Code {
   id: string;
