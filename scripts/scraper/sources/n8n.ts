@@ -90,7 +90,7 @@ function classifyNodes(
   const target = new Set<string>();
   for (const node of nodes) {
     // node.type looks like "n8n-nodes-base.openAi" or "@n8n/n8n-nodes-langchain.lmChatAnthropic"
-    const typeName = node.type.split(".").pop()?.toLowerCase() ?? "";
+    const typeName = node.type?.split(".").pop()?.toLowerCase() ?? "";
     for (const [key, val] of Object.entries(AI_NODE_MAP)) {
       if (typeName.includes(key.toLowerCase())) ai.add(val);
     }
