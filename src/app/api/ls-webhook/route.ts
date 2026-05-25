@@ -66,6 +66,12 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, reason: "no-user-id" }, { status: 400 });
   }
 
+  const { data: userLookup, error: userError } = await supabase.auth.admin.getUserById(userId);
+  if (userError || !userLookup?.user) {
+    console.error("[ls-webhook] unknown user_id", { userId, event, error: userError?.message });
+    return NextResponse.json({ ok: false, reason: "unknown-user" }, { status: 400 });
+  }
+
   const attrs = body.data.attributes;
   const subscriptionId = String(body.data.id);
   const customerId = String(attrs.customer_id);
@@ -104,7 +110,8 @@ export async function POST(req: Request) {
     );
 
   if (error) {
-    return NextResponse.json({ ok: false, reason: error.message }, { status: 500 });
+    console.error("[ls-webhook] db upsert failed", { userId, event, error: error.message });
+    return NextResponse.json({ ok: false, reason: "db-error" }, { status: 500 });
   }
 
   return NextResponse.json({ ok: true });
