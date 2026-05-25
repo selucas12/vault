@@ -22,10 +22,13 @@
  */
 import { githubAwesomeSource } from "./sources/github-awesome";
 import { githubTopicsSource } from "./sources/github-topics";
+import { githubSearchSource } from "./sources/github-search";
 import { huggingfaceSource } from "./sources/huggingface";
 import { n8nSource } from "./sources/n8n";
 import { pipedreamSource } from "./sources/pipedream";
 import { makeSource } from "./sources/make";
+import { npmRegistrySource } from "./sources/npm-registry";
+import { gitlabSource } from "./sources/gitlab";
 import { embedText } from "./embed";
 import { getDb } from "./db";
 import { normalizeSourceUrl } from "./normalize";
@@ -34,10 +37,13 @@ import type { RawEntry, SourceModule } from "./types";
 const ALL_SOURCES: SourceModule[] = [
   githubAwesomeSource,
   githubTopicsSource,
+  githubSearchSource,
   huggingfaceSource,
   n8nSource,
   pipedreamSource,
   makeSource,
+  npmRegistrySource,
+  gitlabSource,
 ];
 
 interface CliArgs {
