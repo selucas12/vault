@@ -16,7 +16,7 @@ async function fetchPage(page: number): Promise<string | null> {
   const res = await fetch(url, {
     headers: {
       "user-agent":
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36",
+        "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)",
       accept: "text/html,application/xhtml+xml",
       "accept-language": "en-US,en;q=0.9",
     },
@@ -38,40 +38,51 @@ function parseCards(html: string): TemplateCard[] {
   const $ = cheerio.load(html);
   const cards: TemplateCard[] = [];
 
-  // Try multiple selector patterns — Make.com redesigns occasionally.
-  // Pattern A: `.template-card` with `.template-card__title`, etc.
-  // Pattern B: `[data-template-id]` wrapper elements.
-  // Pattern C: generic link cards with `a[href*="/templates/"]`.
-  const selectors = [
-    { card: ".template-card", title: ".template-card__title", desc: ".template-card__description", apps: ".template-card__apps img[alt]", link: "a[href]" },
-    { card: "[data-template-id]", title: "h3, .title", desc: "p, .description", apps: "img[alt]", link: "a[href]" },
-    { card: "a[href*='/templates/']", title: "h3, h4, .title", desc: "p", apps: "img[alt]", link: null },
-  ];
+  // 2025 redesign: [data-cy="template-card"] wrapping an <a> with aria-label,
+  // <p> tags for title + description, <img alt="AppName"> for apps.
+  $('[data-cy="template-card"]').each((_, el) => {
+    const $el = $(el);
+    const $link = $el.find("a[href*='/templates/']").first();
+    const href = $link.attr("href") ?? "";
+    // Title is in the first <p>, description in the second <p>
+    const ps = $el.find("p");
+    const title = ps.eq(0).text().trim();
+    const desc = ps.eq(1).text().trim();
+    if (!title) return;
+    const apps: string[] = [];
+    $el.find("img[alt]").each((_, img) => {
+      const alt = $(img).attr("alt");
+      if (alt) apps.push(alt);
+    });
+    let fullHref = href;
+    if (fullHref && !fullHref.startsWith("http")) {
+      fullHref = `https://www.make.com${fullHref}`;
+    }
+    cards.push({ title, description: desc, apps, href: fullHref });
+  });
 
-  for (const sel of selectors) {
-    $(sel.card).each((_, el) => {
+  // Fallback: generic link cards
+  if (cards.length === 0) {
+    $("a[href*='/templates/']").each((_, el) => {
       const $el = $(el);
-      const title = $el.find(sel.title).first().text().trim();
+      const href = $el.attr("href") ?? "";
+      if (!href.match(/\/templates\/\d+/)) return;
+      const title = $el.attr("aria-label")?.replace(/^Try the /, "").replace(/ template$/, "").trim() ?? "";
       if (!title) return;
-      const desc = $el.find(sel.desc).first().text().trim();
+      const desc = $el.find("p").first().text().trim();
       const apps: string[] = [];
-      $el.find(sel.apps).each((_, img) => {
+      $el.find("img[alt]").each((_, img) => {
         const alt = $(img).attr("alt");
         if (alt) apps.push(alt);
       });
-      let href = "";
-      if (sel.link) {
-        href = $el.find(sel.link).first().attr("href") ?? "";
-      } else {
-        href = $el.attr("href") ?? "";
+      let fullHref = href;
+      if (fullHref && !fullHref.startsWith("http")) {
+        fullHref = `https://www.make.com${fullHref}`;
       }
-      if (href && !href.startsWith("http")) {
-        href = `https://www.make.com${href}`;
-      }
-      cards.push({ title, description: desc, apps, href });
+      cards.push({ title, description: desc, apps, href: fullHref });
     });
-    if (cards.length > 0) break; // use the first selector that matched
   }
+
   return cards;
 }
 
