@@ -91,3 +91,59 @@ export const DELIVERY_TARGETS: { id: DeliveryTarget; label: string }[] = [
   { id: "imessage", label: "iMessage" },
   { id: "teams", label: "Teams" },
 ];
+
+export type PromptSource =
+  | "anthropic-prompt-library"
+  | "openai-examples"
+  | "awesome-chatgpt-prompts"
+  | "awesome-claude-prompts"
+  | "flowgpt"
+  | "prompthero"
+  | "manual";
+
+export type PromptCategory =
+  | "coding"
+  | "writing"
+  | "analysis"
+  | "creative"
+  | "business"
+  | "education"
+  | "roleplay"
+  | "productivity"
+  | "other";
+
+export const PROMPT_CATEGORIES: { id: PromptCategory; label: string }[] = [
+  { id: "coding", label: "Coding" },
+  { id: "writing", label: "Writing" },
+  { id: "analysis", label: "Analysis" },
+  { id: "creative", label: "Creative" },
+  { id: "business", label: "Business" },
+  { id: "education", label: "Education" },
+  { id: "roleplay", label: "Roleplay" },
+  { id: "productivity", label: "Productivity" },
+  { id: "other", label: "Other" },
+];
+
+export interface Prompt {
+  id: string;
+  title: string;
+  body: string;
+  source: PromptSource;
+  source_url: string;
+  ai_platforms: AIPlatform[];
+  use_case: string | null;
+  category: PromptCategory | null;
+  tags: string[];
+  quality_score: number | null;
+  quality_reasoning: string | null;
+  hidden_from_directory: boolean;
+  is_free: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface PromptSearchMatch {
+  id: string;
+  why: string;
+  confidence: "high" | "medium" | "low";
+}
