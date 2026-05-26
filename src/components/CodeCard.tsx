@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Code } from "@/lib/types";
 
-export function CodeCard({ code, highlight, variant = "default" }: { code: Code; highlight?: string; variant?: "default" | "featured" }) {
+export function CodeCard({ code, highlight, variant = "default", showGuideStatus = false }: { code: Code; highlight?: string; variant?: "default" | "featured"; showGuideStatus?: boolean }) {
   const verified = code.last_verified_status === "working";
   const cardClasses =
     variant === "featured"
@@ -16,11 +16,24 @@ export function CodeCard({ code, highlight, variant = "default" }: { code: Code;
           )}
           <h3 className="font-semibold text-base leading-snug">{code.title}</h3>
         </div>
-        {verified ? (
-          <span className="badge badge-verified shrink-0">✓ verified</span>
-        ) : (
-          <span className="badge badge-unverified shrink-0">unverified</span>
-        )}
+        <div className="flex items-center gap-1 shrink-0">
+          {showGuideStatus && code.install_guide_status && code.install_guide_status !== "missing" && (
+            <span className={`text-xs font-semibold px-1.5 py-0.5 rounded-full ${
+              code.install_guide_status === "verified"
+                ? "bg-green-100 text-green-700"
+                : code.install_guide_status === "broken"
+                  ? "bg-red-100 text-red-700"
+                  : "bg-orange-100 text-orange-700"
+            }`}>
+              {code.install_guide_status === "verified" ? "✓ guide" : code.install_guide_status === "broken" ? "⚠️ guide" : "draft guide"}
+            </span>
+          )}
+          {verified ? (
+            <span className="badge badge-verified shrink-0">✓ verified</span>
+          ) : (
+            <span className="badge badge-unverified shrink-0">unverified</span>
+          )}
+        </div>
       </div>
       {highlight && (
         <p className="text-xs text-[var(--color-orange-dark)] italic mb-2">{highlight}</p>

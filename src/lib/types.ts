@@ -31,6 +31,8 @@ export type SourceType =
   | "npm"
   | "gitlab";
 
+export type InstallGuideStatus = "missing" | "draft" | "verified" | "broken";
+
 export interface Code {
   id: string;
   source_url: string;
@@ -53,6 +55,12 @@ export interface Code {
   category: string | null;
   featured: boolean;
   editor_note: string | null;
+  install_guide: string | null;
+  install_guide_status: InstallGuideStatus | null;
+  install_guide_author: string | null;
+  install_guide_updated_at: string | null;
+  install_guide_helpful_count: number;
+  install_guide_error_reports: number;
 }
 
 export interface Subscriber {

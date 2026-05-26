@@ -10,7 +10,7 @@ export default function TermsPage() {
   return (
     <article className="max-w-3xl mx-auto px-6 py-12 prose-vault">
       <h1 className="text-3xl font-bold mb-2">Terms of service</h1>
-      <p className="text-sm text-[var(--color-ink-muted)] mb-8">Last updated: May 24, 2026</p>
+      <p className="text-sm text-[var(--color-ink-muted)] mb-8">Last updated: May 26, 2026</p>
 
       <Section title="1. Definitions">
         <p><strong>Vault</strong> refers to the product and website at vault.cheesyboy.dev, operated by Cheesyboy (Bubbles LLC, San Juan, PR).</p>
@@ -58,7 +58,13 @@ export default function TermsPage() {
         <p>These terms are governed by the laws of Puerto Rico, USA. Any disputes will be resolved in the courts of San Juan, PR.</p>
       </Section>
 
-      <Section title="10. Changes">
+      <Section title="10. Install guides">
+        <p>
+          Vault provides AI-generated install guides for some integrations. These guides are best-effort, community-verified, and provided &ldquo;as-is&rdquo; without warranty. They are not professional support. Vault is not responsible for damage resulting from following these guides. Users should verify all commands before executing them, especially anything involving system modifications, dependency installations, or credential handling.
+        </p>
+      </Section>
+
+      <Section title="11. Changes">
         <p>We may update these terms from time to time. For material changes, we&apos;ll email active subscribers at least 14 days before the change takes effect. Continued use after the effective date constitutes acceptance.</p>
       </Section>
 
