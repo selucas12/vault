@@ -11,6 +11,10 @@
     "scrape:dry": "tsx scripts/scraper/index.ts --dry-run --limit 20",
     "quality": "tsx scripts/quality-score.ts",
     "quality:dry": "tsx scripts/quality-score.ts --dry-run --limit 20",
+    "scrape:prompts": "tsx scripts/scraper/prompts/index.ts",
+    "scrape:prompts:dry": "tsx scripts/scraper/prompts/index.ts --dry-run --limit 20",
+    "quality:prompts": "tsx scripts/quality-score-prompts.ts",
+    "quality:prompts:dry": "tsx scripts/quality-score-prompts.ts --dry-run --limit 20",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
