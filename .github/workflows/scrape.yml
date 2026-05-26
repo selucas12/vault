@@ -32,7 +32,7 @@ on:
 jobs:
   scrape:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 60
     env:
       NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
       SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
@@ -46,7 +46,8 @@ jobs:
           node-version: "24"
           cache: "npm"
       - run: npm ci
-      - name: Run scraper
+
+      - name: Run integration scraper
         run: |
           ARGS="--limit ${{ github.event.inputs.limit || '500' }}"
           SOURCE="${{ github.event.inputs.source }}"
@@ -57,6 +58,51 @@ jobs:
             ARGS="$ARGS --dry-run"
           fi
           npm run scrape -- $ARGS
-      - name: Score new entries
+
+      - name: Quality-score new integrations
         if: ${{ github.event.inputs.dry_run != 'true' }}
         run: npm run quality -- --limit 200
+
+      - name: Generate install guides
+        if: ${{ github.event.inputs.dry_run != 'true' }}
+        id: guides
+        continue-on-error: true
+        timeout-minutes: 30
+        run: |
+          npx tsx scripts/generate-install-guides.ts 2>&1 | tee /tmp/guides-output.txt
+          COST=$(grep "^Total cost:" /tmp/guides-output.txt | grep -oE '\$[0-9]+\.[0-9]+' | tr -d '$' || echo "0.00")
+          GUIDES=$(grep "^Drafts created:" /tmp/guides-output.txt | grep -oE '[0-9]+' || echo "0")
+          echo "run_cost=$COST" >> "$GITHUB_OUTPUT"
+          echo "guides_created=$GUIDES" >> "$GITHUB_OUTPUT"
+
+      - name: Alert on high guide-generation cost
+        if: ${{ steps.guides.outputs.run_cost > 10 && github.event.inputs.dry_run != 'true' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          COST="${{ steps.guides.outputs.run_cost }}"
+          GUIDES="${{ steps.guides.outputs.guides_created }}"
+          DATE=$(date -u +%Y-%m-%d)
+          gh issue create \
+            --repo "${{ github.repository }}" \
+            --title "High AI cost run: \$${COST} on ${DATE}" \
+            --body "## Daily Scrape Cost Alert
+
+          **Date:** ${DATE}
+          **Run cost:** \$${COST}
+          **Guides generated:** ${GUIDES}
+          **Threshold:** \$10
+          **Workflow run:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+          Review the run and adjust scraper limits if costs are trending upward." \
+            --label "cost-alert" || true
+
+      - name: Run prompt scraper
+        if: ${{ github.event.inputs.dry_run != 'true' }}
+        continue-on-error: true
+        run: npm run scrape:prompts || true
+
+      - name: Quality-score new prompts
+        if: ${{ github.event.inputs.dry_run != 'true' }}
+        continue-on-error: true
+        run: npm run quality:prompts || true

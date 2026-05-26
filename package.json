@@ -15,7 +15,8 @@
     "scrape:prompts:dry": "tsx scripts/scraper/prompts/index.ts --dry-run --limit 20",
     "quality:prompts": "tsx scripts/quality-score-prompts.ts",
     "quality:prompts:dry": "tsx scripts/quality-score-prompts.ts --dry-run --limit 20",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "cost:weekly": "tsx scripts/check-weekly-ai-cost.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.98.0",

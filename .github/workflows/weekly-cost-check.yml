@@ -1,0 +1,52 @@
+name: Weekly AI cost check
+
+on:
+  schedule:
+    - cron: "0 0 * * 0" # Sunday midnight UTC
+  workflow_dispatch: {}
+
+jobs:
+  cost-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "24"
+          cache: "npm"
+      - run: npm ci
+
+      - name: Check weekly AI cost
+        id: cost
+        continue-on-error: true
+        run: |
+          npx tsx scripts/check-weekly-ai-cost.ts 2>&1 | tee /tmp/cost-output.txt
+          TOTAL=$(grep "^WEEKLY_COST_TOTAL=" /tmp/cost-output.txt | cut -d= -f2 || echo "0.00")
+          EXCEEDED=$(grep "^WEEKLY_COST_EXCEEDED=" /tmp/cost-output.txt | cut -d= -f2 || echo "false")
+          echo "total=$TOTAL" >> "$GITHUB_OUTPUT"
+          echo "exceeded=$EXCEEDED" >> "$GITHUB_OUTPUT"
+
+      - name: Create cost alert issue
+        if: ${{ steps.cost.outputs.exceeded == 'true' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TOTAL="${{ steps.cost.outputs.total }}"
+          DATE=$(date -u +%Y-%m-%d)
+          gh issue create \
+            --repo "${{ github.repository }}" \
+            --title "Weekly AI cost exceeded \$40: \$${TOTAL}" \
+            --body "## Weekly Cost Alert
+
+          **Week ending:** ${DATE}
+          **Estimated total:** \$${TOTAL}
+          **Threshold:** \$40
+
+          Review scraper run history and consider reducing limits or scraper frequency.
+
+          **Workflow run:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+            --label "cost-alert" || true
