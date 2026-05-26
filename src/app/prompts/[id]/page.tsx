@@ -3,7 +3,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { getSupabaseServer } from "@/lib/supabase/server";
 import { getSubscriptionState } from "@/lib/subscription";
-import { CopyButton } from "@/components/CopyButton";
+import { PromptCopyButton } from "@/components/PromptCopyButton";
 import type { Prompt } from "@/lib/types";
 
 interface PageProps {
@@ -72,7 +72,7 @@ export default async function PromptDetailPage({ params }: PageProps) {
         <div className="card mb-6">
           <div className="flex items-center justify-between mb-3">
             <div className="text-xs uppercase tracking-wider text-[var(--color-ink-muted)]">Prompt</div>
-            <CopyButton text={prompt.body} />
+            <PromptCopyButton text={prompt.body} promptId={prompt.id} />
           </div>
           <pre className="bg-[var(--color-ink)] text-[var(--color-cream)] p-4 rounded text-sm font-mono overflow-x-auto whitespace-pre-wrap">
             {prompt.body}

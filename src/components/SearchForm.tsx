@@ -34,6 +34,7 @@ export function SearchForm() {
     setLoading(true);
     setError(null);
     setResult(null);
+    trackEvent("Search Submitted", { query_length: query.trim().length });
     try {
       const res = await fetch("/api/search", {
         method: "POST",

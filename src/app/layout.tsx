@@ -10,12 +10,12 @@ import { PlausibleProvider } from "@/components/PlausibleProvider";
 const SITE_URL = getSiteUrl().replace(/\/$/, "");
 const SITE_NAME = "Vault";
 const DEFAULT_DESCRIPTION =
-  "A curated, AI-searchable directory of tools that connect Claude, GPT, Gemini, and other AI to Telegram, Slack, Discord, WhatsApp, and iMessage. By the makers of Cheesyboy.";
+  "Hand-verified AI integrations and quality-scored prompts for Claude, GPT, Gemini, and more. AI-searchable. From $9.99/mo.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Vault — the curated index of AI ↔ chat-platform integrations",
+    default: "Vault — curated AI integrations and prompts for Claude, GPT, Gemini",
     template: "%s · Vault",
   },
   description: DEFAULT_DESCRIPTION,
@@ -23,26 +23,28 @@ export const metadata: Metadata = {
   authors: [{ name: "Cheesyboy", url: "https://cheesyboy.dev" }],
   keywords: [
     "AI integrations",
+    "AI prompts",
     "Claude bot",
     "ChatGPT Telegram bot",
     "Slack AI",
     "Discord AI",
     "Gemini bot",
     "AI directory",
+    "prompt library",
     "chatbot index",
   ],
   alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     siteName: SITE_NAME,
-    title: "Vault — the curated index of AI ↔ chat-platform integrations",
+    title: "Vault — curated AI integrations and prompts for Claude, GPT, Gemini",
     description: DEFAULT_DESCRIPTION,
     url: "/",
     locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Vault — curated AI ↔ chat-platform integrations",
+    title: "Vault — curated AI integrations and prompts",
     description: DEFAULT_DESCRIPTION,
   },
   robots: {
