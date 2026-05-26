@@ -5,6 +5,9 @@ import { createClient } from "@supabase/supabase-js";
 const BATCH_SIZE = 5;
 const MODEL = "claude-sonnet-4-6";
 const MAX_README_CHARS = 5000;
+const COST_PER_INPUT_MTOK = 3;
+const COST_PER_OUTPUT_MTOK = 15;
+const MAX_RUN_COST = 20; // abort if cumulative cost exceeds this
 
 interface CodeRow {
   id: string;
@@ -137,6 +140,14 @@ async function generateGuides(): Promise<GenerationResult> {
   };
 
   for (let i = 0; i < entries.length; i += BATCH_SIZE) {
+    const runCost =
+      (result.inputTokens / 1_000_000) * COST_PER_INPUT_MTOK +
+      (result.outputTokens / 1_000_000) * COST_PER_OUTPUT_MTOK;
+    if (runCost > MAX_RUN_COST) {
+      console.error(`\nCOST CAP HIT: $${runCost.toFixed(2)} exceeds $${MAX_RUN_COST} limit. Aborting.`);
+      console.log(`Completed ${result.success} guides before abort.`);
+      break;
+    }
     const batch = entries.slice(i, i + BATCH_SIZE) as CodeRow[];
     const promises = batch.map(async (entry) => {
       try {
@@ -203,8 +214,8 @@ async function main() {
 
   const result = await generateGuides();
 
-  const inputCost = (result.inputTokens / 1_000_000) * 3;
-  const outputCost = (result.outputTokens / 1_000_000) * 15;
+  const inputCost = (result.inputTokens / 1_000_000) * COST_PER_INPUT_MTOK;
+  const outputCost = (result.outputTokens / 1_000_000) * COST_PER_OUTPUT_MTOK;
   const totalCost = inputCost + outputCost;
 
   console.log("\n=== Summary ===");
@@ -217,6 +228,8 @@ async function main() {
   }
   console.log(`Tokens: ${result.inputTokens} in / ${result.outputTokens} out`);
   console.log(`Estimated cost: $${totalCost.toFixed(2)} (in: $${inputCost.toFixed(2)}, out: $${outputCost.toFixed(2)})`);
+  // Machine-parseable line for CI
+  console.log(`Total cost: $${totalCost.toFixed(2)}`);
 }
 
 main().catch((err) => {
