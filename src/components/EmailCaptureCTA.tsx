@@ -37,7 +37,7 @@ export function EmailCaptureCTA({
         action={action}
         target="_blank"
         rel="noopener noreferrer"
-        onSubmit={() => trackEvent("Waitlist Signup")}
+        onSubmit={() => trackEvent("Waitlist signup")}
         className="flex flex-col sm:flex-row gap-2 max-w-md mx-auto"
       >
         <input
