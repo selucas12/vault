@@ -5,6 +5,7 @@ import { CopyButton } from "@/components/CopyButton";
 import { JsonLd } from "@/components/JsonLd";
 import { EmailCaptureCTA } from "@/components/EmailCaptureCTA";
 import { SaveButton } from "@/components/SaveButton";
+import { InstallGuide, InstallGuideMissing } from "@/components/InstallGuide";
 import { getSupabaseServer } from "@/lib/supabase/server";
 import { getSiteUrl, getTallyFormId } from "@/lib/env";
 import type { Code } from "@/lib/types";
@@ -176,6 +177,19 @@ export default async function CodeDetailPage({
             {code.install_command}
           </pre>
         </section>
+      )}
+
+      {code.install_guide && code.install_guide_status && code.install_guide_status !== "missing" ? (
+        <InstallGuide
+          codeId={code.id}
+          guide={code.install_guide}
+          status={code.install_guide_status}
+          author={code.install_guide_author ?? null}
+          updatedAt={code.install_guide_updated_at ?? null}
+          isAuthenticated={!!user}
+        />
+      ) : (
+        <InstallGuideMissing />
       )}
 
       <section className="grid sm:grid-cols-2 gap-3 text-sm mb-8">
