@@ -11,6 +11,11 @@ const LISTS = [
   "ebertti/awesome-telegram",
   "DopplerHQ/awesome-bots",
   "enescingoz/awesome-n8n-templates",
+  "reorx/awesome-chatgpt-api",
+  "humanloop/awesome-chatgpt",
+  "DenisIzmaylov/awesome-telegram-bots",
+  "fendouai/Awesome-Chatbot",
+  "JStumpp/awesome-chatbots",
 ];
 
 // Match common awesome-list markdown link patterns. We catch:
@@ -89,7 +94,7 @@ function ownerRepoFromUrl(url: string): string | null {
 export const githubAwesomeSource: SourceModule = {
   type: "github-awesome",
   name: "GitHub awesome-lists",
-  maxEntries: 120,
+  maxEntries: 250,
   autoApprove: true,
   async run({ limit, logger }) {
     const results: RawEntry[] = [];

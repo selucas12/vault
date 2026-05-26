@@ -13,7 +13,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const { data } = await supabase
       .from("codes")
       .select("id, updated_at")
-      .eq("approved", true);
+      .eq("approved", true)
+      .eq("hidden_from_directory", false);
     codeRows = (data ?? []) as { id: string; updated_at: string }[];
   }
 

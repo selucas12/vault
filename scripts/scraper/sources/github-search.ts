@@ -2,34 +2,37 @@ import pThrottle from "p-throttle";
 import { classifyAIPlatforms, classifyDeliveryTargets } from "../classify";
 import type { RawEntry, SourceModule } from "../types";
 
-// Topic-based search queries. Each yields repos tagged with these topics
-// and matching the AI vocabulary in description/topics.
 const QUERIES = [
-  "topic:chatbot-telegram",
-  "topic:telegram-bot openai",
-  "topic:telegram-bot claude",
-  "topic:telegram-bot gemini",
-  "topic:telegram-bot groq",
-  "topic:telegram-bot llama",
-  "topic:telegram-bot mistral",
-  "topic:telegram-bot deepseek",
-  "topic:slack-bot openai",
-  "topic:slack-bot claude",
-  "topic:slack-bot gemini",
-  "topic:slack-bot llm",
-  "topic:discord-bot openai",
-  "topic:discord-bot claude",
-  "topic:discord-bot gemini",
-  "topic:discord-bot llm",
-  "topic:whatsapp-bot openai",
-  "topic:whatsapp-bot claude",
-  "topic:whatsapp-bot chatgpt",
-  "topic:teams-bot openai",
-  "topic:teams-bot chatgpt",
-  "topic:imessage openai",
-  "topic:chatgpt-bot telegram",
-  "topic:chatgpt-bot discord",
-  "topic:chatgpt-bot slack",
+  "claude telegram bot",
+  "claude discord bot",
+  "claude slack bot",
+  "claude whatsapp bot",
+  "chatgpt telegram bot",
+  "chatgpt discord bot",
+  "chatgpt slack bot",
+  "chatgpt whatsapp bot",
+  "gemini telegram bot",
+  "gemini discord bot",
+  "gemini slack bot",
+  "openai telegram bot",
+  "openai discord bot",
+  "openai slack bot",
+  "openai whatsapp bot",
+  "llama telegram bot",
+  "llama discord bot",
+  "mistral telegram bot",
+  "deepseek telegram bot",
+  "ai telegram bot",
+  "ai discord bot",
+  "ai slack bot",
+  "ai whatsapp bot",
+  "llm telegram",
+  "llm discord",
+  "llm slack",
+  "gpt teams bot",
+  "ai teams bot",
+  "groq telegram",
+  "groq discord",
 ];
 
 interface SearchHit {
@@ -41,15 +44,17 @@ interface SearchHit {
   license: { spdx_id?: string | null } | null;
   owner: { login: string };
   html_url: string;
+  archived: boolean;
+  updated_at: string;
 }
 
 interface SearchResponse {
   items: SearchHit[];
 }
 
-const throttle = pThrottle({ limit: 1, interval: 1100 });
+const throttle = pThrottle({ limit: 1, interval: 2200 });
 
-async function search(q: string): Promise<SearchHit[]> {
+async function search(q: string, perPage: number): Promise<SearchHit[]> {
   const token = process.env.GITHUB_TOKEN;
   const headers: Record<string, string> = {
     accept: "application/vnd.github+json",
@@ -57,7 +62,7 @@ async function search(q: string): Promise<SearchHit[]> {
     "x-github-api-version": "2022-11-28",
   };
   if (token) headers.authorization = `Bearer ${token}`;
-  const url = `https://api.github.com/search/repositories?q=${encodeURIComponent(q)}&sort=stars&order=desc&per_page=30`;
+  const url = `https://api.github.com/search/repositories?q=${encodeURIComponent(q)}&sort=stars&order=desc&per_page=${perPage}`;
   const res = await fetch(url, { headers });
   if (!res.ok) return [];
   const data = (await res.json()) as SearchResponse;
@@ -66,10 +71,10 @@ async function search(q: string): Promise<SearchHit[]> {
 
 const throttledSearch = throttle(search);
 
-export const githubTopicsSource: SourceModule = {
-  type: "github-topic",
-  name: "GitHub topic search",
-  maxEntries: 150,
+export const githubSearchSource: SourceModule = {
+  type: "github-search",
+  name: "GitHub broad search",
+  maxEntries: 300,
   autoApprove: false,
   async run({ limit, logger }) {
     const out: RawEntry[] = [];
@@ -78,19 +83,20 @@ export const githubTopicsSource: SourceModule = {
     for (const q of QUERIES) {
       if (out.length >= limit) break;
       logger(`Searching: ${q}`);
-      const hits = await throttledSearch(q);
+      const hits = await throttledSearch(q, 30);
       logger(`  ${hits.length} hits`);
       for (const hit of hits) {
         if (out.length >= limit) break;
         if (seen.has(hit.full_name)) continue;
         seen.add(hit.full_name);
+        if (hit.archived) continue;
         const text = `${hit.full_name} ${hit.description ?? ""}`;
         const ai = classifyAIPlatforms(text, hit.topics);
         const target = classifyDeliveryTargets(text, hit.topics);
         if (ai.length === 0 || target.length === 0) continue;
         out.push({
           source_url: hit.html_url,
-          source_type: "github-topic",
+          source_type: "github-search",
           title: hit.full_name.split("/").pop() ?? hit.full_name,
           description: hit.description,
           ai_platforms: ai,

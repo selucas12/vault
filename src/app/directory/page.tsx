@@ -54,6 +54,7 @@ export default async function DirectoryPage({
         .from("codes")
         .select("*")
         .eq("approved", true)
+        .eq("hidden_from_directory", false)
         .eq("featured", true)
         .order("stars", { ascending: false });
       featured = (featuredData ?? []) as Code[];
@@ -63,6 +64,7 @@ export default async function DirectoryPage({
       .from("codes")
       .select("*", { count: "exact" })
       .eq("approved", true)
+      .eq("hidden_from_directory", false)
       .order("stars", { ascending: false })
       .range((page - 1) * PAGE_SIZE, page * PAGE_SIZE - 1);
 
