@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { CodeCard } from "@/components/CodeCard";
 import { FilterBar } from "@/components/FilterBar";
+import { DraftGuideToggle } from "@/components/DraftGuideToggle";
 import { EmailCaptureCTA } from "@/components/EmailCaptureCTA";
 import { getSupabaseServer } from "@/lib/supabase/server";
 import { getTallyFormId } from "@/lib/env";
@@ -21,6 +22,7 @@ interface SearchParams {
   ai?: string;
   target?: string;
   page?: string;
+  drafts?: string;
 }
 
 export default async function DirectoryPage({
@@ -36,9 +38,13 @@ export default async function DirectoryPage({
   const targetFilters = (params.target ?? "").split(",").filter(Boolean);
   const q = (params.q ?? "").trim();
 
+  const showDrafts = params.drafts === "1";
+
   let codes: Code[] = [];
   let featured: Code[] = [];
+  let draftCodes: Code[] = [];
   let total = 0;
+  let draftCount = 0;
   let error: string | null = null;
 
   // Featured entries only show on page 1 and only when no filters are active —
@@ -84,6 +90,26 @@ export default async function DirectoryPage({
     else {
       codes = (data ?? []) as Code[];
       total = count ?? 0;
+    }
+
+    // Count entries with draft/verified guides that are hidden from directory
+    const { count: dcCount } = await supabase
+      .from("codes")
+      .select("id", { count: "exact", head: true })
+      .eq("approved", true)
+      .eq("hidden_from_directory", true)
+      .in("install_guide_status", ["draft", "verified"]);
+    draftCount = dcCount ?? 0;
+
+    if (showDrafts && draftCount > 0) {
+      const { data: drafts } = await supabase
+        .from("codes")
+        .select("*")
+        .eq("approved", true)
+        .eq("hidden_from_directory", true)
+        .in("install_guide_status", ["draft", "verified"])
+        .order("stars", { ascending: false });
+      draftCodes = (drafts ?? []) as Code[];
     }
   }
 
@@ -185,6 +211,21 @@ export default async function DirectoryPage({
             </nav>
           )}
 
+          <DraftGuideToggle draftCount={draftCount} />
+
+          {showDrafts && draftCodes.length > 0 && (
+            <section className="mt-8">
+              <p className="text-xs text-[var(--color-ink-muted)] mb-3">
+                These entries have AI-generated install guides being community-verified. Click any to see the guide.
+              </p>
+              <div className="grid sm:grid-cols-2 gap-4">
+                {draftCodes.map((c) => (
+                  <CodeCard key={c.id} code={c} showGuideStatus />
+                ))}
+              </div>
+            </section>
+          )}
+
           <EmailCaptureCTA formId={getTallyFormId()} variant="compact" />
         </section>
       </div>
@@ -198,5 +239,6 @@ function buildQs(p: SearchParams): string {
   if (p.ai) out.set("ai", p.ai);
   if (p.target) out.set("target", p.target);
   if (p.page) out.set("page", p.page);
+  if (p.drafts) out.set("drafts", p.drafts);
   return out.toString();
 }
