@@ -45,7 +45,7 @@ function parseCSV(raw: string): { act: string; prompt: string }[] {
     // act may be unquoted or quoted; prompt is typically quoted with "" escapes
     const firstComma = line.indexOf(",");
     if (firstComma < 0) { i++; continue; }
-    let act = line.slice(0, firstComma).replace(/^"|"$/g, "").replace(/""/g, '"');
+    const act = line.slice(0, firstComma).replace(/^"|"$/g, "").replace(/""/g, '"');
     const rest = line.slice(firstComma + 1);
     // Extract prompt (second field) — find the field boundary
     let prompt: string;

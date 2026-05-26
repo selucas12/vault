@@ -62,20 +62,21 @@ export default async function Home() {
           Stop hunting GitHub for AI integrations.
         </h1>
         <p className="text-base sm:text-xl text-[var(--color-ink-muted)] max-w-2xl mx-auto mb-8">
-          Vault is the curated index of tools that connect{" "}
+          Vault is the curated index of{" "}
+          <span className="text-[var(--color-orange-dark)] font-semibold">AI integrations + prompts</span>{" "}
+          for{" "}
           <span className="text-[var(--color-orange-dark)] font-semibold">Claude, GPT, Gemini</span>{" "}
-          and other AI to{" "}
-          <span className="text-[var(--color-orange-dark)] font-semibold">
-            Telegram, Slack, Discord, WhatsApp, iMessage
-          </span>
-          . Search in plain English. Install in one line.
+          and more. Search in plain English. Install in one line. Build custom prompts on demand.
         </p>
         <div className="flex flex-wrap gap-3 justify-center">
           <Link href="/search" className="btn-primary">
             Try AI Search →
           </Link>
           <Link href="/directory" className="btn-ghost">
-            Browse the directory
+            Browse integrations
+          </Link>
+          <Link href="/prompts" className="btn-ghost">
+            Browse prompts
           </Link>
         </div>
         <p className="text-xs text-[var(--color-ink-muted)] mt-6">
@@ -86,7 +87,7 @@ export default async function Home() {
       {/* What is Vault */}
       <section className="max-w-6xl mx-auto px-6 py-12">
         <h2 className="text-3xl font-bold mb-8 text-center">Why Vault?</h2>
-        <div className="grid sm:grid-cols-3 gap-4">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="card">
             <div className="text-2xl mb-2">🤖</div>
             <h3 className="font-semibold text-lg mb-1">Curated, not scraped</h3>
@@ -109,6 +110,14 @@ export default async function Home() {
             <p className="text-sm text-[var(--color-ink-muted)]">
               Every entry has a copy-paste install command. No clone-this-then-read-the-readme
               detective work. We did the work.
+            </p>
+          </div>
+          <div className="card">
+            <div className="text-2xl mb-2">📝</div>
+            <h3 className="font-semibold text-lg mb-1">Prompts library</h3>
+            <p className="text-sm text-[var(--color-ink-muted)]">
+              Quality-rated prompts for Claude, GPT, and Gemini. Copy-paste ready,
+              or build a custom prompt tailored to your exact use case.
             </p>
           </div>
         </div>
@@ -165,6 +174,8 @@ export default async function Home() {
             <ul className="text-sm text-[var(--color-ink-muted)] space-y-2 mb-6">
               <li>✓ Full directory access</li>
               <li>✓ AI-assisted search with reasoning</li>
+              <li>✓ Full prompts library + copy</li>
+              <li>✓ 10 custom prompt builds/month</li>
               <li>✓ Daily updates</li>
               <li>✓ Save your shortlist</li>
               <li>✓ Cancel anytime</li>
@@ -187,6 +198,7 @@ export default async function Home() {
             <ul className="text-sm text-[var(--color-ink-muted)] space-y-2 mb-6">
               <li>✓ Everything in Monthly</li>
               <li>✓ Two months free</li>
+              <li>✓ Unlimited custom prompt builds</li>
               <li>✓ Early access to new features</li>
               <li>✓ Direct support — meow@cheesyboy.dev</li>
               <li>✓ Cancel anytime</li>

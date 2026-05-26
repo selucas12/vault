@@ -76,6 +76,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <Link href="/directory" className="hover:text-[var(--color-orange-primary)]">
                 Directory
               </Link>
+              <Link href="/prompts" className="hover:text-[var(--color-orange-primary)]">
+                Prompts
+              </Link>
               <Link href="/search" className="hover:text-[var(--color-orange-primary)]">
                 AI Search
               </Link>
@@ -120,6 +123,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <div className="space-y-1">
                   <div className="font-semibold text-[var(--color-ink)] text-xs uppercase tracking-wider">Product</div>
                   <Link href="/directory" className="block hover:text-[var(--color-orange-primary)]">Directory</Link>
+                  <Link href="/prompts" className="block hover:text-[var(--color-orange-primary)]">Prompts</Link>
                   <Link href="/search" className="block hover:text-[var(--color-orange-primary)]">AI Search</Link>
                   <a href="https://github.com/selucas12/vault" className="block hover:text-[var(--color-orange-primary)]">GitHub</a>
                 </div>
