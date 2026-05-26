@@ -7,7 +7,7 @@ export function PromptCopyButton({ text, promptId }: { text: string; promptId: s
   return (
     <CopyButton
       text={text}
-      onCopy={() => trackEvent("Prompt Copied", { prompt_id: promptId })}
+      onCopy={() => trackEvent("Prompt copied", { prompt_id: promptId })}
     />
   );
 }
