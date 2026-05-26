@@ -17,10 +17,11 @@ interface LSWebhookBody {
       | "subscription_payment_success"
       | "subscription_payment_failed"
       | string;
+    webhook_id?: string;
     custom_data?: { user_id?: string };
   };
   data: {
-    id: string; // subscription id
+    id: string;
     attributes: {
       customer_id: number | string;
       product_id: number | string;
@@ -33,13 +34,17 @@ interface LSWebhookBody {
   };
 }
 
+function genericError(status: number) {
+  return NextResponse.json({ ok: false, reason: "internal-error" }, { status });
+}
+
 export async function POST(req: Request) {
   const env = getLemonSqueezyServerEnv();
-  if (!env) return NextResponse.json({ ok: false, reason: "no-env" }, { status: 503 });
+  if (!env) return genericError(503);
 
   const signature = req.headers.get("x-signature");
   const raw = await req.text();
-  if (!signature) return NextResponse.json({ ok: false, reason: "no-signature" }, { status: 401 });
+  if (!signature) return genericError(401);
 
   const expected = crypto
     .createHmac("sha256", env.webhookSecret)
@@ -48,28 +53,41 @@ export async function POST(req: Request) {
   const ok =
     expected.length === signature.length &&
     crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(signature));
-  if (!ok) return NextResponse.json({ ok: false, reason: "bad-signature" }, { status: 401 });
+  if (!ok) return genericError(401);
 
   let body: LSWebhookBody;
   try {
     body = JSON.parse(raw);
   } catch {
-    return NextResponse.json({ ok: false, reason: "bad-json" }, { status: 400 });
+    return genericError(400);
   }
 
   const supabase = getSupabaseService();
-  if (!supabase) return NextResponse.json({ ok: false, reason: "no-supabase" }, { status: 503 });
+  if (!supabase) return genericError(503);
 
   const event = body.meta.event_name;
+  const eventId = body.meta.webhook_id ?? `${body.data.id}-${event}-${Date.now()}`;
+
+  // Idempotency: skip already-processed events
+  const { data: existing } = await supabase
+    .from("processed_webhooks")
+    .select("id")
+    .eq("id", eventId)
+    .maybeSingle();
+  if (existing) {
+    return NextResponse.json({ ok: true, skipped: true });
+  }
+
   const userId = body.meta.custom_data?.user_id;
   if (!userId) {
-    return NextResponse.json({ ok: false, reason: "no-user-id" }, { status: 400 });
+    console.error("[ls-webhook] no user_id in custom_data", { event, eventId });
+    return genericError(400);
   }
 
   const { data: userLookup, error: userError } = await supabase.auth.admin.getUserById(userId);
   if (userError || !userLookup?.user) {
-    console.error("[ls-webhook] unknown user_id", { userId, event, error: userError?.message });
-    return NextResponse.json({ ok: false, reason: "unknown-user" }, { status: 400 });
+    console.error("[ls-webhook] unknown user_id", { userId, event });
+    return genericError(400);
   }
 
   const attrs = body.data.attributes;
@@ -84,13 +102,23 @@ export async function POST(req: Request) {
     return "inactive";
   })();
 
-  // Variants encode the plan. Stephen will fill these in when the LS product exists.
-  // For now we treat any active subscription as "monthly" by default.
+  // Plan detection: fail loudly if variants aren't configured
   const monthlyVariant = process.env.LS_VARIANT_MONTHLY;
   const annualVariant = process.env.LS_VARIANT_ANNUAL;
   const variantId = String(attrs.variant_id);
-  const plan: "monthly" | "annual" | null =
-    variantId === annualVariant ? "annual" : variantId === monthlyVariant ? "monthly" : "monthly";
+
+  let plan: "monthly" | "annual" | null = null;
+  if (variantId === annualVariant) {
+    plan = "annual";
+  } else if (variantId === monthlyVariant) {
+    plan = "monthly";
+  } else if (!monthlyVariant && !annualVariant) {
+    console.error("[ls-webhook] LS_VARIANT_MONTHLY and LS_VARIANT_ANNUAL not configured", { variantId, event });
+    return genericError(500);
+  } else {
+    console.error("[ls-webhook] unknown variant_id, does not match configured variants", { variantId, monthlyVariant, annualVariant, event });
+    return genericError(500);
+  }
 
   const periodEnd = attrs.renews_at ?? attrs.ends_at ?? null;
 
@@ -110,9 +138,12 @@ export async function POST(req: Request) {
     );
 
   if (error) {
-    console.error("[ls-webhook] db upsert failed", { userId, event, error: error.message });
-    return NextResponse.json({ ok: false, reason: "db-error" }, { status: 500 });
+    console.error("[ls-webhook] db upsert failed", { userId, event });
+    return genericError(500);
   }
+
+  // Record event as processed (best-effort)
+  await supabase.from("processed_webhooks").insert({ id: eventId });
 
   return NextResponse.json({ ok: true });
 }
