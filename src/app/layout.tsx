@@ -10,12 +10,12 @@ import { PlausibleProvider } from "@/components/PlausibleProvider";
 const SITE_URL = getSiteUrl().replace(/\/$/, "");
 const SITE_NAME = "Vault";
 const DEFAULT_DESCRIPTION =
-  "A curated, AI-searchable directory of tools that connect Claude, GPT, Gemini, and other AI to Telegram, Slack, Discord, WhatsApp, and iMessage. By the makers of Cheesyboy.";
+  "Hand-verified AI integrations and quality-scored prompts for Claude, GPT, Gemini, and more. AI-searchable. From $9.99/mo.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Vault — the curated index of AI ↔ chat-platform integrations",
+    default: "Vault — curated AI integrations and prompts for Claude, GPT, Gemini",
     template: "%s · Vault",
   },
   description: DEFAULT_DESCRIPTION,
@@ -23,26 +23,28 @@ export const metadata: Metadata = {
   authors: [{ name: "Cheesyboy", url: "https://cheesyboy.dev" }],
   keywords: [
     "AI integrations",
+    "AI prompts",
     "Claude bot",
     "ChatGPT Telegram bot",
     "Slack AI",
     "Discord AI",
     "Gemini bot",
     "AI directory",
+    "prompt library",
     "chatbot index",
   ],
   alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     siteName: SITE_NAME,
-    title: "Vault — the curated index of AI ↔ chat-platform integrations",
+    title: "Vault — curated AI integrations and prompts for Claude, GPT, Gemini",
     description: DEFAULT_DESCRIPTION,
     url: "/",
     locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Vault — curated AI ↔ chat-platform integrations",
+    title: "Vault — curated AI integrations and prompts",
     description: DEFAULT_DESCRIPTION,
   },
   robots: {
@@ -75,6 +77,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <div className="hidden md:flex items-center gap-4 text-sm">
               <Link href="/directory" className="hover:text-[var(--color-orange-primary)]">
                 Directory
+              </Link>
+              <Link href="/prompts" className="hover:text-[var(--color-orange-primary)]">
+                Prompts
               </Link>
               <Link href="/search" className="hover:text-[var(--color-orange-primary)]">
                 AI Search
@@ -120,6 +125,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <div className="space-y-1">
                   <div className="font-semibold text-[var(--color-ink)] text-xs uppercase tracking-wider">Product</div>
                   <Link href="/directory" className="block hover:text-[var(--color-orange-primary)]">Directory</Link>
+                  <Link href="/prompts" className="block hover:text-[var(--color-orange-primary)]">Prompts</Link>
                   <Link href="/search" className="block hover:text-[var(--color-orange-primary)]">AI Search</Link>
                   <a href="https://github.com/selucas12/vault" className="block hover:text-[var(--color-orange-primary)]">GitHub</a>
                 </div>

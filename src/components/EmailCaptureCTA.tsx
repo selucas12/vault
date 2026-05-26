@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { trackEvent } from "@/lib/analytics";
 
 // Lightweight email capture. Submits to a Tally form by redirecting with
 // the email as a URL prefill parameter. No backend, no analytics.
@@ -36,6 +37,7 @@ export function EmailCaptureCTA({
         action={action}
         target="_blank"
         rel="noopener noreferrer"
+        onSubmit={() => trackEvent("Waitlist Signup")}
         className="flex flex-col sm:flex-row gap-2 max-w-md mx-auto"
       >
         <input

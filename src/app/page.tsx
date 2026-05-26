@@ -59,23 +59,22 @@ export default async function Home() {
           />
         </div>
         <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-4">
-          Stop hunting GitHub for AI integrations.
+          Stop hunting for AI integrations and prompts.
         </h1>
         <p className="text-base sm:text-xl text-[var(--color-ink-muted)] max-w-2xl mx-auto mb-8">
-          Vault is the curated index of tools that connect{" "}
+          Curated, AI-searchable index of integrations and quality-scored prompts for{" "}
           <span className="text-[var(--color-orange-dark)] font-semibold">Claude, GPT, Gemini</span>{" "}
-          and other AI to{" "}
-          <span className="text-[var(--color-orange-dark)] font-semibold">
-            Telegram, Slack, Discord, WhatsApp, iMessage
-          </span>
-          . Search in plain English. Install in one line.
+          and more. Hand-verified. Install in one line. Copy in one click.
         </p>
         <div className="flex flex-wrap gap-3 justify-center">
           <Link href="/search" className="btn-primary">
             Try AI Search →
           </Link>
           <Link href="/directory" className="btn-ghost">
-            Browse the directory
+            Browse integrations
+          </Link>
+          <Link href="/prompts" className="btn-ghost">
+            Browse prompts
           </Link>
         </div>
         <p className="text-xs text-[var(--color-ink-muted)] mt-6">
@@ -91,24 +90,24 @@ export default async function Home() {
             <div className="text-2xl mb-2">🤖</div>
             <h3 className="font-semibold text-lg mb-1">Curated, not scraped</h3>
             <p className="text-sm text-[var(--color-ink-muted)]">
-              Hand-picked from awesome-lists, GitHub topics, and Hugging Face. Auto-verified
-              when we can install it. Manually reviewed when we can&apos;t.
+              Every integration is verified before it ships. We check installs, review
+              docs, and filter the noise so you don&apos;t have to.
+            </p>
+          </div>
+          <div className="card">
+            <div className="text-2xl mb-2">📝</div>
+            <h3 className="font-semibold text-lg mb-1">Prompts you can trust</h3>
+            <p className="text-sm text-[var(--color-ink-muted)]">
+              Every prompt is quality-scored. We hide the slop, you see only the gems.
+              Copy-paste ready, or build a custom prompt for your exact use case.
             </p>
           </div>
           <div className="card">
             <div className="text-2xl mb-2">🔍</div>
-            <h3 className="font-semibold text-lg mb-1">Search in English</h3>
+            <h3 className="font-semibold text-lg mb-1">AI search across both</h3>
             <p className="text-sm text-[var(--color-ink-muted)]">
-              Type what you want — &ldquo;I want Claude to message me on Slack when CI
-              fails&rdquo; — and our AI matches you to the right tool with reasoning.
-            </p>
-          </div>
-          <div className="card">
-            <div className="text-2xl mb-2">⚡</div>
-            <h3 className="font-semibold text-lg mb-1">One-line install</h3>
-            <p className="text-sm text-[var(--color-ink-muted)]">
-              Every entry has a copy-paste install command. No clone-this-then-read-the-readme
-              detective work. We did the work.
+              Type what you want, we find the integration or the prompt that matches.
+              Our AI understands intent and explains why each result fits.
             </p>
           </div>
         </div>
@@ -163,10 +162,11 @@ export default async function Home() {
               $9.99 <span className="text-base font-normal text-[var(--color-ink-muted)]">/mo</span>
             </div>
             <ul className="text-sm text-[var(--color-ink-muted)] space-y-2 mb-6">
-              <li>✓ Full directory access</li>
-              <li>✓ AI-assisted search with reasoning</li>
-              <li>✓ Daily updates</li>
-              <li>✓ Save your shortlist</li>
+              <li>✓ Full directory of verified integrations</li>
+              <li>✓ Full quality-scored prompts library</li>
+              <li>✓ AI search across both</li>
+              <li>✓ Save your shortlist (My List)</li>
+              <li>✓ 10 custom prompt builds per month</li>
               <li>✓ Cancel anytime</li>
               <li>✓ <a href="/refund" className="underline">30-day refund</a></li>
             </ul>
@@ -187,6 +187,7 @@ export default async function Home() {
             <ul className="text-sm text-[var(--color-ink-muted)] space-y-2 mb-6">
               <li>✓ Everything in Monthly</li>
               <li>✓ Two months free</li>
+              <li>✓ <strong>Unlimited</strong> custom prompt builds</li>
               <li>✓ Early access to new features</li>
               <li>✓ Direct support — meow@cheesyboy.dev</li>
               <li>✓ Cancel anytime</li>
@@ -210,15 +211,20 @@ export default async function Home() {
 
       {/* CTA */}
       <section className="max-w-3xl mx-auto px-6 py-16 text-center">
-        <h2 className="text-2xl font-bold mb-3">No fluff. Just the integrations that actually work.</h2>
+        <h2 className="text-2xl font-bold mb-3">No fluff. Just tools and prompts that actually work.</h2>
         <p className="text-[var(--color-ink-muted)] mb-6">
           Vault is built by the same indie shop behind{" "}
           <a href="https://cheesyboy.dev" className="text-[var(--color-orange-dark)] underline">Cheesyboy</a>.
           We use it ourselves. Daily.
         </p>
-        <Link href="/directory" className="btn-ghost">
-          Start browsing →
-        </Link>
+        <div className="flex flex-wrap gap-3 justify-center">
+          <Link href="/directory" className="btn-ghost">
+            Browse integrations →
+          </Link>
+          <Link href="/prompts" className="btn-ghost">
+            Browse prompts →
+          </Link>
+        </div>
       </section>
 
       {/* Email capture */}
