@@ -97,7 +97,8 @@ async function scoreEntry(client: Anthropic, entry: CodeRow): Promise<{ score: n
     messages: [{ role: "user", content: `${SCORE_PROMPT}\n\nEntry:\n${entryDesc}` }],
   });
 
-  const text = res.content[0]?.type === "text" ? res.content[0].text : "";
+  let text = res.content[0]?.type === "text" ? res.content[0].text : "";
+  text = text.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/,  "").trim();
   try {
     const parsed = JSON.parse(text);
     return { score: Math.max(1, Math.min(10, Math.round(parsed.score))), reasoning: parsed.reasoning ?? "" };
